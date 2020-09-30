@@ -24,7 +24,7 @@ def multi_label_y_encoder(multi_y):
     encoded_label_list = []
     for y_array in multi_y:
         y_list = list(y_array)
-        y_int = res = float(int("".join(str(int(x)) for x in y_list), 2))
+        y_int = int("".join(str(int(x)) for x in y_list), 2)
         encoded_label_list.append(y_int)
 
     encoded_label_array = np.array(encoded_label_list).reshape(len(encoded_label_list))
