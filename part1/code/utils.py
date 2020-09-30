@@ -1,4 +1,5 @@
 import numpy
+from sklearn.model_selection import StratifiedKFold
 
 def load_single(path):
     data = numpy.loadtxt(path)
