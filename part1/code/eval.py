@@ -1,25 +1,42 @@
-import numpy as np
 from sklearn.model_selection import StratifiedKFold
-
+from classifier import linear_svm_classifier, KNeighborsClassifier, MLPClassifier
 import regression
-import utils
 
 
 
-def kfold(inputs,outputs):
-    kfold_split = StratifiedKFold(n_splits=10)
-    kfold = kfold.split(inputs, outputs)
-    return kfold
+def evaluate(model_names, model_list, data):
+    X, y = data[0], data[1]
 
-def evaluate(model_type, model, inputs, outputs):
-    scores = []
-    kfold = kfold(inputs,outputs)
-    for fold, (train, test) in enumerate(kfold):
-        if model_type == 'regression' and model == 'MLP'
-        regression.MLP(inputs.iloc[train, :], outputs.iloc[train])
-        score = MLP.score(inputs.iloc[test, :], outputs.iloc[test])
-        scores.append(score)
-        print('Fold: %2d, Training/Test Split Distribution: %s, Accuracy: %.3f' % (fold+1, np.bincount(outputs.iloc[train]), score))
- 
-    print('\n\nCross-Validation accuracy: %.3f +/- %.3f' %(np.mean(scores), np.std(scores)))
+    if data[1][0].size == 1:
+        y = y.reshape(y.size)
+
+    skf = StratifiedKFold(n_splits=10, random_state=None, shuffle=True)
+
+    for model_name, model in zip(model_names, model_list):
+        scores = []
+        for train_index, test_index in skf.split(X, y):
+            training_data = (X[train_index], X[test_index])
+            testing_data = (y[train_index], y[test_index])
+
+            estimator = model(training_data)
+            scores.append(estimator.score(testing_data[0], testing_data[1]))
+        print("-------------------------- %s ------------------------------------" % model_name)
+        print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+
+
+if __name__ == '__main__':
+    from utils import load_multi, load_single
+
+    single_label_data_path = '../datasets-part1/tictac_single.txt'
+    multi_label_data_path = '../datasets-part1/tictac_multi.txt'
+    # data = load_multi(multi_label_data_path)
+    data = load_single(single_label_data_path)
+
+    classifier_names = ["Linear SVM Classifier", "K Nearest Neighbors Classifier", "MLP Classifier"]
+    classifier_model_list = [linear_svm_classifier, KNeighborsClassifier, MLPClassifier]
+
+    Regressor_names = ["Linear Regression", "K Nearest Neighbors Regressor", "MLP Regressor"]
+
+    evaluate(classifier_names, classifier_model_list, data)
+
 
