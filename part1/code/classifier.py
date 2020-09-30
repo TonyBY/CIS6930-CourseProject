@@ -7,15 +7,15 @@ from utils import multi_label_y_encoder
 
 
 def linear_svm_classifier(data):
-    print("Linear_SVM Classifier")
+    # print("Linear_SVM Classifier")
 
     X, y = data[0], data[1]
 
     if data[1][0].size == 1:
-        print("Using single-label dataset: ")
+        # print("Using single-label dataset: ")
         y = y.reshape(y.size)
     else:
-        print("Using multi-label dataset: ")
+        # print("Using multi-label dataset: ")
         y = multi_label_y_encoder(y)
 
     lsvm = LinearSVC(random_state=0, tol=1e-5)
@@ -26,15 +26,15 @@ def linear_svm_classifier(data):
 
 
 def knn_classifier(data):
-    print("K-Newrest Neighbors Classifier")
+    # print("K-Newrest Neighbors Classifier")
 
     X, y = data[0], data[1]
 
     if data[1][0].size == 1:
-        print("Using single-label dataset: ")
+        # print("Using single-label dataset: ")
         y = y.reshape(y.size)
-    else:
-        print("Using multi-label dataset: ")
+    # else:
+    #     print("Using multi-label dataset: ")
 
     knn = KNeighborsClassifier(n_neighbors=3)
     knn.fit(X, y)
@@ -44,15 +44,15 @@ def knn_classifier(data):
 
 
 def mlp_classifier(data):
-    print("Multilayer Perceptron Classifier")
+    # print("Multilayer Perceptron Classifier")
 
     X, y = data[0], data[1]
 
     if data[1][0].size == 1:
-        print("Using single-label dataset: ")
+        # print("Using single-label dataset: ")
         y = y.reshape(y.size)
-    else:
-        print("Using multi-label dataset: ")
+    # else:
+        # print("Using multi-label dataset: ")
 
     mlp = MLPClassifier(random_state=1, max_iter=100).fit(X, y)
     mlp.fit(X, y)
