@@ -1,5 +1,7 @@
+import numpy as np
+
 from sklearn.model_selection import StratifiedKFold
-from classifier import linear_svm_classifier, KNeighborsClassifier, MLPClassifier
+from classifier import linear_svm_classifier, knn_classifier, mlp_classifier
 import regression
 
 
@@ -15,11 +17,12 @@ def evaluate(model_names, model_list, data):
     for model_name, model in zip(model_names, model_list):
         scores = []
         for train_index, test_index in skf.split(X, y):
-            training_data = (X[train_index], X[test_index])
-            testing_data = (y[train_index], y[test_index])
+            training_data = (X[train_index], y[train_index])
+            testing_data = (X[test_index], y[test_index])
 
             estimator = model(training_data)
             scores.append(estimator.score(testing_data[0], testing_data[1]))
+        scores = np.array(scores)
         print("-------------------------- %s ------------------------------------" % model_name)
         print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
@@ -33,7 +36,7 @@ if __name__ == '__main__':
     data = load_single(single_label_data_path)
 
     classifier_names = ["Linear SVM Classifier", "K Nearest Neighbors Classifier", "MLP Classifier"]
-    classifier_model_list = [linear_svm_classifier, KNeighborsClassifier, MLPClassifier]
+    classifier_model_list = [linear_svm_classifier, knn_classifier, mlp_classifier]
 
     Regressor_names = ["Linear Regression", "K Nearest Neighbors Regressor", "MLP Regressor"]
 
