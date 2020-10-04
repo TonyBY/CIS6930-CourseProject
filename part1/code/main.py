@@ -1,6 +1,7 @@
 import argparse
 import utils
 import regression
+import classifier
 import game
 
 def parse_args(args=None):
@@ -46,7 +47,15 @@ def main(args):
 
         elif args.model_type == 'classification':
             model = args.classification_model
-            #write classification function calls here
+            if model == 'SVM':
+                classifier.svm_classifier(data)
+            elif model == 'k-nearest':
+                classifier.knn_classifier(data)
+            elif model == 'MLP':
+                classifier.mlp_classifier(data)
+            else:
+                print("EERROR: Please enter a valid classification model type. (SVM, k-nearest, MLP)")
+
         else:
             print("ERROR: Invald model type. Please enter regression or classification.")
 

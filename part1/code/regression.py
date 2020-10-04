@@ -1,13 +1,16 @@
 import numpy as np
-from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPRegressor
+from sklearn import svm
 
 import utils
 
 def knearest(data):
     print("K-nearest regression")
-    knn = KNeighborsRegressor(n_neighbors=2)
-    knn.fit(data[0], data[1])
+    lin_clf = svm.LinearSVC()
+    lin_clf.fit(data[0], data[1])
+    print(in_clf.predict([[1, -1, 0, 0, 0, 0, 0, 1, 0]]))
+
 
 def multilayer_perceptron(data):
     print('MLP')

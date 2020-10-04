@@ -1,7 +1,8 @@
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
+from sklearn.multiclass import OneVsRestClassifier
+
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
-
 
 from utils import multi_label_y_encoder
 
@@ -24,6 +25,11 @@ def linear_svm_classifier(data):
     # print("Score: ", lsvm.score(X, y))
     return lsvm
 
+def svm_classifier(data):
+    X, y = data[0], data[1]
+    clf = OneVsRestClassifier(SVC(kernel='linear', probability=True))
+    clf.fit(X, y)
+    return clf
 
 def knn_classifier(data):
     # print("K-Newrest Neighbors Classifier")
