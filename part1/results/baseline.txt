@@ -1,0 +1,267 @@
+ python main.py -model_type classification                                                                      
+tictac_single.txt
+
+K-Newrest Neighbors Classifier
+------------- Fold: 1 -------------
+Exact Accuracy: 0.89
+Hamming score (multi-class accuracy): 0.95
+------------- Fold: 2 -------------
+Exact Accuracy: 0.88
+Hamming score (multi-class accuracy): 0.97
+------------- Fold: 3 -------------
+Exact Accuracy: 0.87
+Hamming score (multi-class accuracy): 0.96
+------------- Fold: 4 -------------
+Exact Accuracy: 0.90
+Hamming score (multi-class accuracy): 0.95
+------------- Fold: 5 -------------
+Exact Accuracy: 0.88
+Hamming score (multi-class accuracy): 0.98
+------------- Fold: 6 -------------
+Exact Accuracy: 0.88
+Hamming score (multi-class accuracy): 0.97
+------------- Fold: 7 -------------
+Exact Accuracy: 0.90
+Hamming score (multi-class accuracy): 0.97
+------------- Fold: 8 -------------
+Exact Accuracy: 0.91
+Hamming score (multi-class accuracy): 0.97
+------------- Fold: 9 -------------
+Exact Accuracy: 0.89
+Hamming score (multi-class accuracy): 0.96
+------------- Fold: 10 -------------
+Exact Accuracy: 0.92
+Hamming score (multi-class accuracy): 0.97
+
+Mean Exact Accuracy: 0.89 (+/- 0.03)
+
+Mean Hamming Score: 0.97 (+/- 0.02)
+
+
+Linear_SVM Classifier
+------------- Fold: 1 -------------
+Exact Accuracy: 0.26
+Hamming score (multi-class accuracy): 0.30
+------------- Fold: 2 -------------
+Exact Accuracy: 0.26
+Hamming score (multi-class accuracy): 0.29
+------------- Fold: 3 -------------
+Exact Accuracy: 0.23
+Hamming score (multi-class accuracy): 0.26
+------------- Fold: 4 -------------
+Exact Accuracy: 0.25
+Hamming score (multi-class accuracy): 0.29
+------------- Fold: 5 -------------
+Exact Accuracy: 0.23
+Hamming score (multi-class accuracy): 0.25
+------------- Fold: 6 -------------
+Exact Accuracy: 0.22
+Hamming score (multi-class accuracy): 0.23
+------------- Fold: 7 -------------
+Exact Accuracy: 0.25
+Hamming score (multi-class accuracy): 0.27
+------------- Fold: 8 -------------
+Exact Accuracy: 0.22
+Hamming score (multi-class accuracy): 0.24
+------------- Fold: 9 -------------
+Exact Accuracy: 0.24
+Hamming score (multi-class accuracy): 0.26
+------------- Fold: 10 -------------
+Exact Accuracy: 0.23
+Hamming score (multi-class accuracy): 0.27
+
+Mean Exact Accuracy: 0.24 (+/- 0.03)
+
+Mean Hamming Score: 0.26 (+/- 0.04)
+
+
+Multilayer Perceptron Classifier
+------------- Fold: 1 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.93
+Hamming score (multi-class accuracy): 0.97
+------------- Fold: 2 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.89
+Hamming score (multi-class accuracy): 0.96
+------------- Fold: 3 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.91
+Hamming score (multi-class accuracy): 0.97
+------------- Fold: 4 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.91
+Hamming score (multi-class accuracy): 0.96
+------------- Fold: 5 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.91
+Hamming score (multi-class accuracy): 0.97
+------------- Fold: 6 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.89
+Hamming score (multi-class accuracy): 0.95
+------------- Fold: 7 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.88
+Hamming score (multi-class accuracy): 0.96
+------------- Fold: 8 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.90
+Hamming score (multi-class accuracy): 0.96
+------------- Fold: 9 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.90
+Hamming score (multi-class accuracy): 0.97
+------------- Fold: 10 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.90
+Hamming score (multi-class accuracy): 0.96
+
+Mean Exact Accuracy: 0.90 (+/- 0.02)
+
+Mean Hamming Score: 0.96 (+/- 0.02)
+
+
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+tictac_multi.txt
+
+K-Newrest Neighbors Classifier
+------------- Fold: 1 -------------
+Exact Accuracy: 0.82
+Hamming score (multi-class accuracy): 0.87
+------------- Fold: 2 -------------
+Exact Accuracy: 0.81
+Hamming score (multi-class accuracy): 0.89
+------------- Fold: 3 -------------
+Exact Accuracy: 0.80
+Hamming score (multi-class accuracy): 0.87
+------------- Fold: 4 -------------
+Exact Accuracy: 0.81
+Hamming score (multi-class accuracy): 0.88
+------------- Fold: 5 -------------
+Exact Accuracy: 0.82
+Hamming score (multi-class accuracy): 0.88
+------------- Fold: 6 -------------
+Exact Accuracy: 0.83
+Hamming score (multi-class accuracy): 0.89
+------------- Fold: 7 -------------
+Exact Accuracy: 0.84
+Hamming score (multi-class accuracy): 0.91
+------------- Fold: 8 -------------
+Exact Accuracy: 0.82
+Hamming score (multi-class accuracy): 0.89
+------------- Fold: 9 -------------
+Exact Accuracy: 0.83
+Hamming score (multi-class accuracy): 0.89
+------------- Fold: 10 -------------
+Exact Accuracy: 0.80
+Hamming score (multi-class accuracy): 0.87
+
+Mean Exact Accuracy: 0.82 (+/- 0.03)
+
+Mean Hamming Score: 0.88 (+/- 0.02)
+
+
+Linear_SVM Classifier
+------------- Fold: 1 -------------
+Exact Accuracy: 0.12
+Hamming score (multi-class accuracy): 0.18
+------------- Fold: 2 -------------
+Exact Accuracy: 0.12
+Hamming score (multi-class accuracy): 0.18
+------------- Fold: 3 -------------
+Exact Accuracy: 0.12
+Hamming score (multi-class accuracy): 0.18
+------------- Fold: 4 -------------
+Exact Accuracy: 0.10
+Hamming score (multi-class accuracy): 0.16
+------------- Fold: 5 -------------
+Exact Accuracy: 0.11
+Hamming score (multi-class accuracy): 0.17
+------------- Fold: 6 -------------
+Exact Accuracy: 0.11
+Hamming score (multi-class accuracy): 0.17
+------------- Fold: 7 -------------
+Exact Accuracy: 0.11
+Hamming score (multi-class accuracy): 0.16
+------------- Fold: 8 -------------
+Exact Accuracy: 0.11
+Hamming score (multi-class accuracy): 0.18
+------------- Fold: 9 -------------
+Exact Accuracy: 0.12
+Hamming score (multi-class accuracy): 0.18
+------------- Fold: 10 -------------
+Exact Accuracy: 0.11
+Hamming score (multi-class accuracy): 0.17
+
+Mean Exact Accuracy: 0.11 (+/- 0.02)
+
+Mean Hamming Score: 0.17 (+/- 0.02)
+
+
+Multilayer Perceptron Classifier
+------------- Fold: 1 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.58
+Hamming score (multi-class accuracy): 0.80
+------------- Fold: 2 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.55
+Hamming score (multi-class accuracy): 0.78
+------------- Fold: 3 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.59
+Hamming score (multi-class accuracy): 0.80
+------------- Fold: 4 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.58
+Hamming score (multi-class accuracy): 0.79
+------------- Fold: 5 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.56
+Hamming score (multi-class accuracy): 0.77
+------------- Fold: 6 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.57
+Hamming score (multi-class accuracy): 0.79
+------------- Fold: 7 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.62
+Hamming score (multi-class accuracy): 0.81
+------------- Fold: 8 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.56
+Hamming score (multi-class accuracy): 0.79
+------------- Fold: 9 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.56
+Hamming score (multi-class accuracy): 0.79
+------------- Fold: 10 -------------
+/Users/tony/anaconda3/envs/deep-learning-3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:582: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  warnings.warn(
+Exact Accuracy: 0.58
+Hamming score (multi-class accuracy): 0.79
+
+Mean Exact Accuracy: 0.58 (+/- 0.04)
+
+Mean Hamming Score: 0.79 (+/- 0.02)
