@@ -29,6 +29,17 @@ def check_win(arr):
             and arr[7] != '7' and arr[8] != '8' and arr[9] != '9':
             return -1
     return 0
+def arr_to_bits(arr):
+    bits = []
+    for i in arr:
+        if i == 'X':
+            bits.append(1)
+        elif i == 'O':
+            bits.append(-1)
+        else:
+            bits.append(0)
+    return bits
+
 def play():
     arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ]
     player = 0 #player 1 goes first
@@ -45,8 +56,8 @@ def play():
             board(arr)
             #choice = int(input())
             #waiting_choices = np.argsort(get_result(arr)) #ask computer for next step
-            test = [0.9, 0.8, 1, 0, 0, 0, 0, 0, 0.1]
-            waiting_choices = list(np.argsort(test))  
+            predicts = regressor(arr_to_bits(arr))
+            waiting_choices = list(np.argsort(predicts))  
             choice =  waiting_choices.pop()+1
             while arr[choice] == 'X' or arr[choice] == 'O':
                 choice = waiting_choices.pop()+1
