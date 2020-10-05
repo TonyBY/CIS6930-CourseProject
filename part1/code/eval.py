@@ -49,9 +49,13 @@ def get_multi_accuracy(predicted, labels):
     return (exact,hamming)
 
 
-def make_confusion_matrix(model, predicted, labels):
-    plot_confusion_matrix(model, predicted, labels, normalize=True)
-    plt.show() 
+def make_confusion_matrix(model, X, labels, title):
+    fig, ax = plt.subplots()
+    ax.set_title(title)
+    plot_confusion_matrix(model, X, labels, normalize='true', ax=ax)
+    file_path = '../results/%s.pdf' % title
+    plt.savefig(file_path, dpi=600, bbox_inches='tight', pad_inches=0)
+    # plt.show()
 
 
 def evaluate_models(class_type, model, X, y, data_type=None, encode=False):
@@ -97,6 +101,15 @@ def evaluate_models(class_type, model, X, y, data_type=None, encode=False):
     hamming_list = np.array(hamming_list)
     print("\nMean Exact Accuracy: %0.2f (+/- %0.2f)" % (accuracy_list.mean(), accuracy_list.std() * 2))
     print("\nMean Hamming Score: %0.2f (+/- %0.2f)\n\n" % (hamming_list.mean(), hamming_list.std() * 2))
+
+    print(str(type(model)))
+    print(class_type)
+    if class_type == 'classifier':
+        print(encode)
+        if encode or 'LinearSVC' in str(type(model)) or 'single' in data_type:
+            print('\n Building Confusiton Matrix...')
+            title = str(type(model)).strip('>').strip("'").split('.')[-1] + '_' + class_type
+            make_confusion_matrix(model, testing_data[0], testing_data[1], title)
 
 
 
