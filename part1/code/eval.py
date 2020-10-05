@@ -102,13 +102,11 @@ def evaluate_models(class_type, model, X, y, data_type=None, encode=False):
     print("\nMean Exact Accuracy: %0.2f (+/- %0.2f)" % (accuracy_list.mean(), accuracy_list.std() * 2))
     print("\nMean Hamming Score: %0.2f (+/- %0.2f)\n\n" % (hamming_list.mean(), hamming_list.std() * 2))
 
-    print(str(type(model)))
-    print(class_type)
     if class_type == 'classifier':
-        print(encode)
         if encode or 'LinearSVC' in str(type(model)) or 'single' in data_type:
             print('\n Building Confusiton Matrix...')
-            title = str(type(model)).strip('>').strip("'").split('.')[-1] + '_' + class_type
+            title = str(type(model)).strip('>').strip("'").split('.')[-1] + '_' + class_type + '_' + \
+                    data_type.split('.')[0]
             make_confusion_matrix(model, testing_data[0], testing_data[1], title)
 
 

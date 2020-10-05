@@ -50,11 +50,11 @@ def main(args):
                     data = utils.load_multi(args.data_path+filename)
                 for classification in classifiers:
                     if classification == 'SVM':
-                        linear_svm_classifier(data,filename)
+                        linear_svm_classifier(data, data_type=filename)
                     elif classification == 'k-nearest':
-                        knn_classifier(data, encode=args.encode)
+                        knn_classifier(data, encode=args.encode, data_type=filename)
                     elif classification == 'MLP':
-                        mlp_classifier(data, encode=args.encode)
+                        mlp_classifier(data, encode=args.encode, data_type=filename)
             
         elif args.model_type == 'regression':
             data = utils.load_multi(args.data_path+'tictac_multi.txt')

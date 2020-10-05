@@ -23,13 +23,13 @@ def linear_svm_classifier(data, data_type):
     evaluate_models('classifier', lsvm, X, y, data_type=data_type)
 
 
-def svm_classifier(data, encode=False):
+def svm_classifier(data, encode=False, data_type=None):
     X, y = data[0], data[1]
     clf = OneVsRestClassifier(SVC(kernel='linear', probability=True))
-    evaluate_models('classifier', clf, X, y, encode=encode)
+    evaluate_models('classifier', clf, X, y, encode=encode, data_type=data_type)
 
 
-def knn_classifier(data, encode=False):
+def knn_classifier(data, encode=False, data_type=None):
     print("K-Newrest Neighbors Classifier")
 
     X, y = data[0], data[1]
@@ -40,10 +40,10 @@ def knn_classifier(data, encode=False):
         y = multi_label_y_encoder(y)
 
     knn = KNeighborsClassifier(n_neighbors=1)
-    evaluate_models('classifier', knn, X, y, encode=encode)
+    evaluate_models('classifier', knn, X, y, encode=encode, data_type=data_type)
 
 
-def mlp_classifier(data, encode=False):
+def mlp_classifier(data, encode=False, data_type=None):
     print("Multilayer Perceptron Classifier")
 
     X, y = data[0], data[1]
@@ -54,4 +54,4 @@ def mlp_classifier(data, encode=False):
         y = multi_label_y_encoder(y)
 
     mlp = MLPClassifier(random_state=1, max_iter=500)
-    evaluate_models('classifier', mlp, X, y, encode=encode)
+    evaluate_models('classifier', mlp, X, y, encode=encode, data_type=data_type)
