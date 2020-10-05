@@ -1,22 +1,24 @@
 import numpy as np
-from sklearn.model_selection import StratifiedKFold
+
 
 def load_single(path):
     data = np.loadtxt(path)
-    inputs = data[:,:-1]
-    outputs = data[:,-1:]
-    return(inputs,outputs)
+    inputs = data[:, :-1]
+    outputs = data[:, -1:]
+    return(inputs, outputs)
+
 
 def load_multi(path):
     data = np.loadtxt(path)
     inputs = data[:,:9]
     outputs = data[:,9:]
-    return(inputs,outputs)
+    return(inputs, outputs)
+
 
 def load_final(path):
     data = np.loadtxt(path)
-    inputs = data[:,:9]
-    outcome = data[:,9:]
+    inputs = data[:, :9]
+    outcome = data[:, 9:]
     return(inputs,outcome)
 
 

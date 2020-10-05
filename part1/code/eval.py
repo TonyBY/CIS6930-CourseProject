@@ -11,8 +11,10 @@ import seaborn as sns
 from utils import multi_label_y_encoder, multi_label_y_decoder
 from linearRegression import linear_regression_fit, linear_regression_predict
 
+
 def get_exact_match_accuracy(predicted,labels):
     return accuracy_score(labels, predicted, normalize=True, sample_weight=None)
+
 
 #motivated by https://stackoverflow.com/questions/32239577/getting-the-accuracy-for-multi-label-prediction-in-scikit-learn
 def get_hamming_score(predicted,labels):
@@ -31,23 +33,28 @@ def get_hamming_score(predicted,labels):
         acc_list.append(temp_accuracy)
     return np.mean(acc_list)
 
+
 def get_intersect_accuracy(predicted,labels):
     intersect = len(labels.intersection(predicted))
     return float(intersect/len(labels))
 
+
 def get_single_accuracy(predicted, labels):
     return get_exact_match_accuracy(predicted,labels)
+
 
 def get_multi_accuracy(predicted, labels):
     exact = get_exact_match_accuracy(predicted,labels)
     hamming = get_hamming_score(predicted,labels)
     return (exact,hamming)
 
+
 def make_confusion_matrix(model, predicted, labels):
     plot_confusion_matrix(model, predicted, labels, normalize=True)
     plt.show() 
 
-def evaluate_models(class_type, model, X, y, data_type=None):
+
+def evaluate_models(class_type, model, X, y, data_type=None, encode=False):
     accuracy_list = []
     hamming_list = []
     cnt = 1
@@ -71,11 +78,15 @@ def evaluate_models(class_type, model, X, y, data_type=None):
         if class_type == 'regressor':
             predict = np.rint(predict) 
         
-        if 'LinearSVC' in str(type(model)) and 'multi' in data_type:
+        if encode:
             predict = multi_label_y_decoder(predict)
             labels = multi_label_y_decoder(testing_data[1])
         else:
-            labels = testing_data[1]
+            if 'LinearSVC' in str(type(model)) and 'multi' in data_type:
+                predict = multi_label_y_decoder(predict)
+                labels = multi_label_y_decoder(testing_data[1])
+            else:
+                labels = testing_data[1]
         
         accuracy, hamming = get_multi_accuracy(predict,labels)
         accuracy_list.append(accuracy)

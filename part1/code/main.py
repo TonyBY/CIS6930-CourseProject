@@ -1,20 +1,24 @@
 import argparse
 import utils
-import regression
-import classifier
+from regression import knearest, linear_regression, multilayer_perceptron
+from classifier import linear_svm_classifier, knn_classifier, mlp_classifier
 import game
+
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
         description='Run regressor, classification, or game algorithm on multi or single data'
     )
-    parser.add_argument('-data_path',default='../datasets-part1/',help='data path of file containing tic tac toe data')
+    parser.add_argument('-data_path', default='../datasets-part1/', help='data path of file containing tic tac toe data')
     # parser.add_argument('-label',default='single',help="Type of data. single or multi.")
-    parser.add_argument('-model_type', default='classification',help='Options: regression/classification')
-    parser.add_argument('-game', '--game',action='store_true',help='If True play tic-tac-toe game.')
+    parser.add_argument('-model_type', default='classification', help='Options: regression/classification')
+    parser.add_argument('-game', '--game', action='store_true', help='If True play tic-tac-toe game.')
     # parser.add_argument('-regression_model',default='linear',help='Options: k-nearest, linear, MLP')
     # parser.add_argument('-classification_model',default='SVM',help='Options: k-nearest, SVM, MLP')
+    parser.add_argument('-e', '--encode', action='store_true', help='encode the multi label into single label.')
+
     return parser.parse_args(args)
+
 
 def main(args):
     if args.game:
@@ -46,25 +50,24 @@ def main(args):
                     data = utils.load_multi(args.data_path+filename)
                 for classification in classifiers:
                     if classification == 'SVM':
-                        classifier.linear_svm_classifier(data,filename)
+                        linear_svm_classifier(data,filename)
                     elif classification == 'k-nearest':
-                        classifier.knn_classifier(data)
+                        knn_classifier(data, encode=args.encode)
                     elif classification == 'MLP':
-                        classifier.mlp_classifier(data)
+                        mlp_classifier(data, encode=args.encode)
             
         elif args.model_type == 'regression':
             data = utils.load_multi(args.data_path+'tictac_multi.txt')
             for regressor in regressors:
                 if regressor == 'k-nearest':
-                    regression.knearest(data)
+                    knearest(data)
                 elif regressor == 'linear':
-                    regression.linear_regression(data)
+                    linear_regression(data)
                 elif regressor == 'MLP':
-                    regression.multilayer_perceptron(data)
+                    multilayer_perceptron(data)
 
         else:
-            print("ERROR: Invald model type. Please enter regression or classification.")
-
+            print("ERROR: Invalid model type. Please enter regression or classification.")
 
 
 if __name__ == '__main__':
