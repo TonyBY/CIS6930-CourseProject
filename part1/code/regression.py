@@ -1,21 +1,23 @@
 import numpy as np
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn import svm
 
 import utils
+import eval
 
 def knearest(data):
     print("K-nearest regression")
-    lin_clf = svm.LinearSVC()
-    lin_clf.fit(data[0], data[1])
-    print(in_clf.predict([[1, -1, 0, 0, 0, 0, 0, 1, 0]]))
-
+    X, y = data[0], data[1]
+    knn = KNeighborsRegressor(n_neighbors=1)
+    knn.fit(data[0], data[1])
+    eval.evaluate_models('regressor',knn,X,y)
 
 def multilayer_perceptron(data):
     print('MLP')
-    mlp = MLPRegressor(random_state=1, max_iter=500).fit(data[0], data[1])
-    
+    X, y = data[0], data[1]
+    mlp = MLPRegressor(random_state=1, solver='lbfgs').fit(data[0], data[1])
+    eval.evaluate_models('regressor',mlp,X,y)
 
 def normal_equation(inputs,output):
     first = np.dot(inputs.transpose(),inputs)
@@ -33,19 +35,24 @@ def split_outputs(inputs,outputs):
 def lin_regression_calc(inputs, weight):
     return np.dot(inputs, weight)
 
-def linaer_regression(data):
-    practice_input = [1, 1, -1, 1, 0, 1, -1, -1, 0]    
-    weights_list = []
-    outputs_list = []
-    
-    data_list = split_outputs(data[0], data[1])
+def linear_regression(data):
+    print('Linear Regression')
+    X, y = data[0], data[1]   
+    eval.evaluate_models('regressor','linearRegression',X,y)
+
+def linear_regression_fit(X,y):
+    weights_list = []    
+    data_list = split_outputs(X, y)
     for data in data_list:
         weight = normal_equation(data[0],data[1])
         weights_list.append(weight)
+    return weights_list
 
-    for weight in weights_list:
-        Y = lin_regression_calc(practice_input, weight)
+def linear_regression_predict(data,weight_list):
+    outputs_list = []
+    for weight in weight_list:
+        Y = lin_regression_calc(data, weight)
         outputs_list.append(Y)
-        print(outputs_list)
-        print(outputs_list.index(max(outputs_list)))
+    return outputs_list
+        
 
