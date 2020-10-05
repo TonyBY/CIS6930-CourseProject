@@ -65,37 +65,6 @@ def main(args):
         else:
             print("ERROR: Invald model type. Please enter regression or classification.")
 
-        # if args.label == 'single':
-        #     data = utils.load_single(args.data_path+single_label)
-        # elif args.label == 'multi':
-        #     data = utils.load_multi(args.data_path+multi_label)
-        # else:
-        #     print("ERROR: Invalid label type. Please enter single or multi")
-        
-        # if args.model_type == 'regression':
-        #     model = args.regression_model
-        #     if model == 'k-nearest':
-        #         regression.knearest(data,args.label)
-        #     elif model == 'linear':
-        #         regression.linear_regression(data,args.label)
-        #     elif model == 'MLP':
-        #         regression.multilayer_perceptron(data,args.label)
-        #     else:
-        #         print("EERROR: Please enter a valid regression model type. (k-nearest, linear, MLP)")
-
-        # elif args.model_type == 'classification':
-        #     model = args.classification_model
-        #     if model == 'SVM':
-        #         classifier.linear_svm_classifier(data,args.label)
-        #     elif model == 'k-nearest':
-        #         classifier.knn_classifier(data,args.label)
-        #     elif model == 'MLP':
-        #         classifier.mlp_classifier(data,args.label)
-        #     else:
-        #         print("EERROR: Please enter a valid classification model type. (SVM, k-nearest, MLP)")
-
-        # else:
-        #     print("ERROR: Invald model type. Please enter regression or classification.")
 
 
 if __name__ == '__main__':
