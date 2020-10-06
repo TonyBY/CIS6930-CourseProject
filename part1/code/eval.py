@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 from sklearn.metrics import accuracy_score, plot_confusion_matrix, hamming_loss
 from sklearn.model_selection import StratifiedKFold, KFold
+import math
 # from classifier import svm_classifier, knn_classifier, mlp_classifier
 
 from sklearn.metrics import confusion_matrix
@@ -54,10 +55,45 @@ def get_multi_accuracy(predicted, labels):
 def make_confusion_matrix(model, X, labels, title):
     fig, ax = plt.subplots()
     ax.set_title(title)
-    plot_confusion_matrix(model, X, labels, normalize='true', ax=ax)
+
+    # print(max(labels))
+    if max(labels) > 9:
+        labels_sorted_idx = labels.argsort()
+        sorted_labels = labels[labels_sorted_idx]
+        sorted_X = X[labels_sorted_idx]
+
+        subsample = np.arange(0, labels.size, 2).tolist()
+        # print(subsample)
+        # print('\n')
+        # print(sorted_labels[subsample])
+        # print('\n')
+        # print(np.arange(0, max(sorted_labels[subsample]), math.ceil(max(sorted_labels[subsample]) // 9)).tolist())
+        plot_confusion_matrix(model, sorted_X[subsample], sorted_labels[subsample], labels=sorted_labels[subsample],
+                              normalize='true', ax=ax, include_values=False)
+
+        cnt = 0
+        for label in ax.xaxis.get_ticklabels():
+            interval = math.floor(len(subsample) // 9)
+            if cnt % interval == 0:
+                cnt += 1
+                continue
+            label.set_visible(False)
+            cnt += 1
+
+        cnt = 0
+        for label in ax.yaxis.get_ticklabels():
+            interval = math.floor(len(subsample) // 9)
+            if cnt % interval == 0:
+                cnt += 1
+                continue
+            label.set_visible(False)
+            cnt += 1
+
+
+    else:
+        plot_confusion_matrix(model, X, labels, labels=range(1, 10), normalize='true', ax=ax, include_values=False)
     file_path = '../results/%s.pdf' % title
     plt.savefig(file_path, dpi=600, bbox_inches='tight', pad_inches=0)
-    # plt.show()
 
 
 def evaluate_models(class_type, model, X, y, data_type=None, encode=False):
