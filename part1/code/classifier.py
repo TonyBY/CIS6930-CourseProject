@@ -9,7 +9,7 @@ from utils import multi_label_y_encoder
 from eval import evaluate_models
 
 
-def linear_svm_classifier(data, data_type):
+def linear_svm_classifier(data, data_type, ONE_TENTH_DATA=False):
     print("Linear_SVM Classifier")
 
     X, y = data[0], data[1]
@@ -20,16 +20,16 @@ def linear_svm_classifier(data, data_type):
         y = multi_label_y_encoder(y)
 
     lsvm = LinearSVC(random_state=0, tol=1e-5)
-    evaluate_models('classifier', lsvm, X, y, data_type=data_type)
+    evaluate_models('classifier', lsvm, X, y, data_type=data_type, ONE_TENTH_DATA=ONE_TENTH_DATA)
 
 
-def svm_classifier(data, encode=False, data_type=None):
-    X, y = data[0], data[1]
-    clf = OneVsRestClassifier(SVC(kernel='linear', probability=True))
-    evaluate_models('classifier', clf, X, y, encode=encode, data_type=data_type)
+# def svm_classifier(data, encode=False, data_type=None, ONE_TENTH_DATA=False):
+#     X, y = data[0], data[1]
+#     clf = OneVsRestClassifier(SVC(kernel='linear', probability=True))
+#     evaluate_models('classifier', clf, X, y, encode=encode, data_type=data_type, ONE_TENTH_DATA=False)
 
 
-def knn_classifier(data, encode=False, data_type=None):
+def knn_classifier(data, encode=False, data_type=None, ONE_TENTH_DATA=False):
     print("K-Newrest Neighbors Classifier")
 
     X, y = data[0], data[1]
@@ -40,10 +40,10 @@ def knn_classifier(data, encode=False, data_type=None):
         y = multi_label_y_encoder(y)
 
     knn = KNeighborsClassifier(n_neighbors=1)
-    evaluate_models('classifier', knn, X, y, encode=encode, data_type=data_type)
+    evaluate_models('classifier', knn, X, y, encode=encode, data_type=data_type, ONE_TENTH_DATA=ONE_TENTH_DATA)
 
 
-def mlp_classifier(data, encode=False, data_type=None):
+def mlp_classifier(data, encode=False, data_type=None, ONE_TENTH_DATA=False):
     print("Multilayer Perceptron Classifier")
 
     X, y = data[0], data[1]
@@ -54,4 +54,4 @@ def mlp_classifier(data, encode=False, data_type=None):
         y = multi_label_y_encoder(y)
 
     mlp = MLPClassifier(random_state=1, max_iter=500)
-    evaluate_models('classifier', mlp, X, y, encode=encode, data_type=data_type)
+    evaluate_models('classifier', mlp, X, y, encode=encode, data_type=data_type, ONE_TENTH_DATA=ONE_TENTH_DATA)

@@ -16,6 +16,7 @@ def parse_args(args=None):
     # parser.add_argument('-regression_model',default='linear',help='Options: k-nearest, linear, MLP')
     # parser.add_argument('-classification_model',default='SVM',help='Options: k-nearest, SVM, MLP')
     parser.add_argument('-e', '--encode', action='store_true', help='encode the multi label into single label.')
+    parser.add_argument('-o', '--oneTenth', action='store_true', help='only use 1/10 of data train the model.')
 
     return parser.parse_args(args)
 
@@ -31,13 +32,7 @@ def main(args):
         print("Starting game")
         game.play(multi_data)
     else:
-        # multi_label = 'tictac_multi.txt'
-        # single_label = 'tictac_single.txt'
-
-        # single_data = utils.load_single(args.data_path+single_label)
-        # multi_data = utils.load_multi(args.data_path+multi_label)
-
-        dataset = ['tictac_single.txt', 'tictac_multi.txt']
+        dataset = ['tictac_single.txt', 'tictac_multi.txt', 'tictac_final.txt']
         regressors = ['k-nearest', 'linear', 'MLP']
         classifiers = ['k-nearest', 'SVM', 'MLP']
 
@@ -45,16 +40,18 @@ def main(args):
             for filename in dataset:
                 print(filename+'\n')
                 if 'single' in filename:
-                    data = utils.load_single(args.data_path+filename)
+                    data = utils.load_single(args.data_path+filename, ONE_TENTH_DATA=args.oneTenth)
+                elif 'multi' in filename:
+                    data = utils.load_multi(args.data_path+filename, ONE_TENTH_DATA=args.oneTenth)
                 else:
-                    data = utils.load_multi(args.data_path+filename)
+                    data = utils.load_final(args.data_path + filename, ONE_TENTH_DATA=args.oneTenth)
                 for classification in classifiers:
                     if classification == 'SVM':
-                        linear_svm_classifier(data, data_type=filename)
+                        linear_svm_classifier(data, data_type=filename, ONE_TENTH_DATA=args.oneTenth)
                     elif classification == 'k-nearest':
-                        knn_classifier(data, encode=args.encode, data_type=filename)
+                        knn_classifier(data, encode=args.encode, data_type=filename, ONE_TENTH_DATA=args.oneTenth)
                     elif classification == 'MLP':
-                        mlp_classifier(data, encode=args.encode, data_type=filename)
+                        mlp_classifier(data, encode=args.encode, data_type=filename, ONE_TENTH_DATA=args.oneTenth)
             
         elif args.model_type == 'regression':
             data = utils.load_multi(args.data_path+'tictac_multi.txt')

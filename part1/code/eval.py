@@ -52,8 +52,14 @@ def get_multi_accuracy(predicted, labels):
     return (exact,hamming)
 
 
-def make_confusion_matrix(model, X, labels, title):
+def make_confusion_matrix(model, X, labels, title, ONE_TENTH_DATA=False):
     fig, ax = plt.subplots()
+
+    if ONE_TENTH_DATA:
+        title = title + '_oneTenth'
+        file_path = '../results/%s.pdf' % title
+    else:
+        file_path = '../results/%s.pdf' % title
     ax.set_title(title)
 
     # print(max(labels))
@@ -88,19 +94,19 @@ def make_confusion_matrix(model, X, labels, title):
                 continue
             label.set_visible(False)
             cnt += 1
-
-
+    elif max(labels) < 2:
+        plot_confusion_matrix(model, X, labels, labels=[-1, +1], normalize='true', ax=ax, include_values=False)
     else:
-        plot_confusion_matrix(model, X, labels, labels=range(1, 10), normalize='true', ax=ax, include_values=False)
-    file_path = '../results/%s.pdf' % title
+        plot_confusion_matrix(model, X, labels, labels=range(0, 9), normalize='true', ax=ax, include_values=False)
+
     plt.savefig(file_path, dpi=600, bbox_inches='tight', pad_inches=0)
 
 
-def evaluate_models(class_type, model, X, y, data_type=None, encode=False):
+def evaluate_models(class_type, model, X, y, data_type=None, encode=False, ONE_TENTH_DATA=False):
     accuracy_list = []
     hamming_list = []
     cnt = 1
-    kf = KFold(n_splits=10, shuffle=True)
+    kf = KFold(n_splits=10, shuffle=True, random_state=0)
     for train_index, test_index in kf.split(X,y):
         print("------------- Fold: %s -------------" % cnt)
         cnt += 1
@@ -145,7 +151,7 @@ def evaluate_models(class_type, model, X, y, data_type=None, encode=False):
             print('\n Building Confusiton Matrix...')
             title = str(type(model)).strip('>').strip("'").split('.')[-1] + '_' + class_type + '_' + \
                     data_type.split('.')[0]
-            make_confusion_matrix(model, testing_data[0], testing_data[1], title)
+            make_confusion_matrix(model, testing_data[0], testing_data[1], title, ONE_TENTH_DATA)
 
 
 

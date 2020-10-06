@@ -1,25 +1,80 @@
+from sklearn.model_selection import StratifiedShuffleSplit
 import numpy as np
 
 
-def load_single(path):
+def load_single(path, ONE_TENTH_DATA=False):
     data = np.loadtxt(path)
+
     inputs = data[:, :-1]
+    # print(type(inputs))
+    # print ("input.shape: ", inputs.shape)
     outputs = data[:, -1:]
-    return(inputs, outputs)
+    # print("outputs.shape: ", outputs.shape)
+
+    if ONE_TENTH_DATA:
+        X = inputs
+        y = outputs
+        sss = StratifiedShuffleSplit(n_splits=1, test_size=0.1, random_state=0)
+        for train_index, test_index in sss.split(X, y):
+            # print("TRAIN:", train_index, "TEST:", test_index)
+            X_train, X_test = X[train_index], X[test_index]
+            y_train, y_test = y[train_index], y[test_index]
+            break
+        # print("X.shape: ", X_test.shape)
+        # print("y.shape: ", y_test.shape)
+        return (X_test, y_test)
+    else:
+        return (inputs, outputs)
 
 
-def load_multi(path):
+def load_multi(path, ONE_TENTH_DATA=False):
     data = np.loadtxt(path)
-    inputs = data[:,:9]
-    outputs = data[:,9:]
-    return(inputs, outputs)
 
-
-def load_final(path):
-    data = np.loadtxt(path)
     inputs = data[:, :9]
-    outcome = data[:, 9:]
-    return(inputs,outcome)
+    # print("input.shape: ", inputs.shape)
+    outputs = data[:, 9:]
+    # print("outputs.shape: ", outputs.shape)
+
+    if ONE_TENTH_DATA:
+        X = inputs
+        y = outputs
+        sss = StratifiedShuffleSplit(n_splits=1, test_size=0.1, random_state=0)
+        for train_index, test_index in sss.split(X, y):
+            # print("TRAIN:", train_index, "TEST:", test_index)
+            X_train, X_test = X[train_index], X[test_index]
+            y_train, y_test = y[train_index], y[test_index]
+            break
+        # print("X.shape: ", X_test.shape)
+        # print("y.shape: ", y_test.shape)
+        return (X_test, y_test)
+    else:
+        return (inputs, outputs)
+
+
+def load_final(path, ONE_TENTH_DATA=False):
+    data = np.loadtxt(path)
+
+    inputs = data[:, :-1]
+    # print(type(inputs))
+    # print("input.shape: ", inputs.shape)
+    outputs = data[:, -1:]
+    # print("outputs.shape: ", outputs.shape)
+
+    if ONE_TENTH_DATA:
+        X = inputs
+        y = outputs
+        sss = StratifiedShuffleSplit(n_splits=1, test_size=0.1, random_state=0)
+        for train_index, test_index in sss.split(X, y):
+            # print("TRAIN:", train_index, "TEST:", test_index)
+            X_train, X_test = X[train_index], X[test_index]
+            y_train, y_test = y[train_index], y[test_index]
+            break
+        print("X.shape: ", X_test.shape)
+        print("y.shape: ", y_test.shape)
+        return (X_test, y_test)
+    else:
+        return (inputs, outputs)
+
 
 
 def multi_label_y_encoder(multi_y):
