@@ -29,7 +29,7 @@ def main(args):
         final_data = utils.load_final(args.data_path + final)
         multi_data = utils.load_final(args.data_path + multi_label)
         print("Starting game")
-        game.run()
+        game.play(multi_data)
     else:
         # multi_label = 'tictac_multi.txt'
         # single_label = 'tictac_single.txt'
