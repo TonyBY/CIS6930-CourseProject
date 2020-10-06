@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.metrics import accuracy_score, plot_confusion_matrix
+from sklearn.metrics import accuracy_score, plot_confusion_matrix, hamming_loss
 from sklearn.model_selection import StratifiedKFold, KFold
 # from classifier import svm_classifier, knn_classifier, mlp_classifier
 
@@ -18,20 +18,22 @@ def get_exact_match_accuracy(predicted,labels):
 
 #motivated by https://stackoverflow.com/questions/32239577/getting-the-accuracy-for-multi-label-prediction-in-scikit-learn
 def get_hamming_score(predicted,labels):
-    acc_list = []
-    for i in range(labels.shape[0]):
-        labels_set = set( np.where(labels[i])[0] )
-        predicted_set = set( np.where(predicted[i])[0] )
+    score = 1 - hamming_loss(labels, predicted)
+    return score
+    # acc_list = []
+    # for i in range(labels.shape[0]):
+    #     labels_set = set( np.where(labels[i])[0] )
+    #     predicted_set = set( np.where(predicted[i])[0] )
         
-        temp_accuracy = None
-        if len(labels_set) == 0 and len(predicted_set) == 0:
-            temp_accuracy = 1
-        else:
-            intersect = len(labels_set.intersection(predicted_set))
-            union = len(labels_set.union(predicted_set))
-            temp_accuracy = float(intersect/union)
-        acc_list.append(temp_accuracy)
-    return np.mean(acc_list)
+    #     temp_accuracy = None
+    #     if len(labels_set) == 0 and len(predicted_set) == 0:
+    #         temp_accuracy = 1
+    #     else:
+    #         intersect = len(labels_set.intersection(predicted_set))
+    #         union = len(labels_set.union(predicted_set))
+    #         temp_accuracy = float(intersect/union)
+    #     acc_list.append(temp_accuracy)
+    # return np.mean(acc_list)
 
 
 def get_intersect_accuracy(predicted,labels):
@@ -49,9 +51,13 @@ def get_multi_accuracy(predicted, labels):
     return (exact,hamming)
 
 
-def make_confusion_matrix(model, predicted, labels):
-    plot_confusion_matrix(model, predicted, labels, normalize=True)
-    plt.show() 
+def make_confusion_matrix(model, X, labels, title):
+    fig, ax = plt.subplots()
+    ax.set_title(title)
+    plot_confusion_matrix(model, X, labels, normalize='true', ax=ax)
+    file_path = '../results/%s.pdf' % title
+    plt.savefig(file_path, dpi=600, bbox_inches='tight', pad_inches=0)
+    # plt.show()
 
 
 def evaluate_models(class_type, model, X, y, data_type=None, encode=False):
@@ -97,6 +103,13 @@ def evaluate_models(class_type, model, X, y, data_type=None, encode=False):
     hamming_list = np.array(hamming_list)
     print("\nMean Exact Accuracy: %0.2f (+/- %0.2f)" % (accuracy_list.mean(), accuracy_list.std() * 2))
     print("\nMean Hamming Score: %0.2f (+/- %0.2f)\n\n" % (hamming_list.mean(), hamming_list.std() * 2))
+
+    if class_type == 'classifier':
+        if encode or 'LinearSVC' in str(type(model)) or 'single' in data_type:
+            print('\n Building Confusiton Matrix...')
+            title = str(type(model)).strip('>').strip("'").split('.')[-1] + '_' + class_type + '_' + \
+                    data_type.split('.')[0]
+            make_confusion_matrix(model, testing_data[0], testing_data[1], title)
 
 
 
