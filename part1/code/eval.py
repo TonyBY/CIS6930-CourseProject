@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.metrics import accuracy_score, plot_confusion_matrix
+from sklearn.metrics import accuracy_score, plot_confusion_matrix, hamming_loss
 from sklearn.model_selection import StratifiedKFold, KFold
 # from classifier import svm_classifier, knn_classifier, mlp_classifier
 
@@ -18,20 +18,22 @@ def get_exact_match_accuracy(predicted,labels):
 
 #motivated by https://stackoverflow.com/questions/32239577/getting-the-accuracy-for-multi-label-prediction-in-scikit-learn
 def get_hamming_score(predicted,labels):
-    acc_list = []
-    for i in range(labels.shape[0]):
-        labels_set = set( np.where(labels[i])[0] )
-        predicted_set = set( np.where(predicted[i])[0] )
+    score = 1 - hamming_loss(labels, predicted)
+    return score
+    # acc_list = []
+    # for i in range(labels.shape[0]):
+    #     labels_set = set( np.where(labels[i])[0] )
+    #     predicted_set = set( np.where(predicted[i])[0] )
         
-        temp_accuracy = None
-        if len(labels_set) == 0 and len(predicted_set) == 0:
-            temp_accuracy = 1
-        else:
-            intersect = len(labels_set.intersection(predicted_set))
-            union = len(labels_set.union(predicted_set))
-            temp_accuracy = float(intersect/union)
-        acc_list.append(temp_accuracy)
-    return np.mean(acc_list)
+    #     temp_accuracy = None
+    #     if len(labels_set) == 0 and len(predicted_set) == 0:
+    #         temp_accuracy = 1
+    #     else:
+    #         intersect = len(labels_set.intersection(predicted_set))
+    #         union = len(labels_set.union(predicted_set))
+    #         temp_accuracy = float(intersect/union)
+    #     acc_list.append(temp_accuracy)
+    # return np.mean(acc_list)
 
 
 def get_intersect_accuracy(predicted,labels):

@@ -9,14 +9,13 @@ import eval
 def knearest(data):
     print("K-nearest regression")
     X, y = data[0], data[1]
-    knn = KNeighborsRegressor(n_neighbors=1)
-    knn.fit(data[0], data[1])
+    knn = KNeighborsRegressor(n_neighbors=3)
     eval.evaluate_models('regressor',knn,X,y)
 
 def multilayer_perceptron(data):
     print('MLP')
     X, y = data[0], data[1]
-    mlp = MLPRegressor(random_state=1, solver='lbfgs').fit(data[0], data[1])
+    mlp = MLPRegressor(random_state=1).fit(data[0], data[1])
     eval.evaluate_models('regressor',mlp,X,y)
 
 def normal_equation(inputs,output):
