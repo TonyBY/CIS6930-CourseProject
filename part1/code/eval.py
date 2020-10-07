@@ -7,7 +7,6 @@ import math
 # from classifier import svm_classifier, knn_classifier, mlp_classifier
 
 from sklearn.metrics import confusion_matrix
-import seaborn as sns
 
 from utils import multi_label_y_encoder, multi_label_y_decoder
 from linearRegression import linear_regression_fit, linear_regression_predict
