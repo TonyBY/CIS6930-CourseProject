@@ -9,7 +9,7 @@ import utils
 def knearest(data):
     print("K-nearest regression is coming...")
     X, y = data[0], data[1]
-    knn = KNeighborsRegressor(n_neighbors=5)
+    knn = KNeighborsRegressor(n_neighbors=3)
     knn.fit(data[0], data[1])
     return knn 
 

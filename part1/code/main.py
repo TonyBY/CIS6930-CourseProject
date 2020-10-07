@@ -28,7 +28,7 @@ def main(args):
 
         #function to load multi data and run regressor
         final_data = utils.load_final(args.data_path + final)
-        multi_data = utils.load_final(args.data_path + multi_label)
+        multi_data = utils.load_multi(args.data_path + multi_label)
         print("Starting game")
         game.play(multi_data)
     else:
@@ -63,8 +63,8 @@ def main(args):
                     linear_regression(data)
                 elif regressor == 'MLP':
                     multilayer_perceptron(data)
-                print('Finished Regression.')
-                
+            print('Finished Regression.')
+
         else:
             print("ERROR: Invalid model type. Please enter regression or classification.")
 

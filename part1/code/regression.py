@@ -15,7 +15,7 @@ def knearest(data):
 def multilayer_perceptron(data):
     print('MLP')
     X, y = data[0], data[1]
-    mlp = MLPRegressor(random_state=1).fit(data[0], data[1])
+    mlp = MLPRegressor(random_state=1, solver='lbfgs', max_iter=396).fit(data[0], data[1])
     eval.evaluate_models('regressor',mlp,X,y)
 
 def normal_equation(inputs,output):
