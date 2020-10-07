@@ -52,7 +52,8 @@ def main(args):
                         knn_classifier(data, encode=args.encode, data_type=filename, ONE_TENTH_DATA=args.oneTenth)
                     elif classification == 'MLP':
                         mlp_classifier(data, encode=args.encode, data_type=filename, ONE_TENTH_DATA=args.oneTenth)
-            
+            print('Finished Classification.')
+
         elif args.model_type == 'regression':
             data = utils.load_multi(args.data_path+'tictac_multi.txt')
             for regressor in regressors:
@@ -62,7 +63,8 @@ def main(args):
                     linear_regression(data)
                 elif regressor == 'MLP':
                     multilayer_perceptron(data)
-
+                print('Finished Regression.')
+                
         else:
             print("ERROR: Invalid model type. Please enter regression or classification.")
 

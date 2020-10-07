@@ -143,11 +143,14 @@ def evaluate_models(class_type, model, X, y, data_type=None, encode=False, ONE_T
         print("Hamming score (multi-class accuracy): %0.2f" % (hamming))
     accuracy_list = np.array(accuracy_list)
     hamming_list = np.array(hamming_list)
-    print("\nMean Exact Accuracy: %0.2f (+/- %0.2f)" % (accuracy_list.mean(), accuracy_list.std() * 2))
-    print("\nMean Hamming Score: %0.2f (+/- %0.2f)\n\n" % (hamming_list.mean(), hamming_list.std() * 2))
+    if (data_type is not None and 'single' in data_type) or (data_type is not None and 'final' in data_type):
+        print("\nMean Exact Accuracy: %0.2f (+/- %0.2f)" % (accuracy_list.mean(), accuracy_list.std() * 2))
+    else:
+        print("\nMean Exact Accuracy: %0.2f (+/- %0.2f)" % (accuracy_list.mean(), accuracy_list.std() * 2))
+        print("Mean Hamming Score: %0.2f (+/- %0.2f)\n\n" % (hamming_list.mean(), hamming_list.std() * 2))
 
     if class_type == 'classifier':
-        if encode or 'LinearSVC' in str(type(model)) or 'single' in data_type:
+        if encode or 'LinearSVC' in str(type(model)) or 'single' in data_type or 'final' in data_type:
             print('\n Building Confusiton Matrix...')
             title = str(type(model)).strip('>').strip("'").split('.')[-1] + '_' + class_type + '_' + \
                     data_type.split('.')[0]
