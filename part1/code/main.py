@@ -16,7 +16,7 @@ def parse_args(args=None):
     # parser.add_argument('-regression_model',default='linear',help='Options: k-nearest, linear, MLP')
     # parser.add_argument('-classification_model',default='SVM',help='Options: k-nearest, SVM, MLP')
     parser.add_argument('-e', '--encode', action='store_true', help='encode the multi label into single label.')
-    parser.add_argument('-o', '--oneTenth', action='store_true', help='only use 1/10 of data train the model.')
+    parser.add_argument('-o', '--oneTenth', action='store_true', help='only use 1/10 of data to train the model.')
 
     return parser.parse_args(args)
 

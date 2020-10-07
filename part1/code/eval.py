@@ -20,20 +20,6 @@ def get_exact_match_accuracy(predicted,labels):
 def get_hamming_score(predicted,labels):
     score = 1 - hamming_loss(labels, predicted)
     return score
-    # acc_list = []
-    # for i in range(labels.shape[0]):
-    #     labels_set = set( np.where(labels[i])[0] )
-    #     predicted_set = set( np.where(predicted[i])[0] )
-        
-    #     temp_accuracy = None
-    #     if len(labels_set) == 0 and len(predicted_set) == 0:
-    #         temp_accuracy = 1
-    #     else:
-    #         intersect = len(labels_set.intersection(predicted_set))
-    #         union = len(labels_set.union(predicted_set))
-    #         temp_accuracy = float(intersect/union)
-    #     acc_list.append(temp_accuracy)
-    # return np.mean(acc_list)
 
 
 def get_intersect_accuracy(predicted,labels):
@@ -61,18 +47,12 @@ def make_confusion_matrix(model, X, labels, title, ONE_TENTH_DATA=False):
         file_path = '../results/%s.pdf' % title
     ax.set_title(title)
 
-    # print(max(labels))
     if max(labels) > 9:
         labels_sorted_idx = labels.argsort()
         sorted_labels = labels[labels_sorted_idx]
         sorted_X = X[labels_sorted_idx]
 
         subsample = np.arange(0, labels.size, 2).tolist()
-        # print(subsample)
-        # print('\n')
-        # print(sorted_labels[subsample])
-        # print('\n')
-        # print(np.arange(0, max(sorted_labels[subsample]), math.ceil(max(sorted_labels[subsample]) // 9)).tolist())
         plot_confusion_matrix(model, sorted_X[subsample], sorted_labels[subsample], labels=sorted_labels[subsample],
                               normalize='true', ax=ax, include_values=False)
 
@@ -154,6 +134,3 @@ def evaluate_models(class_type, model, X, y, data_type=None, encode=False, ONE_T
             title = str(type(model)).strip('>').strip("'").split('.')[-1] + '_' + class_type + '_' + \
                     data_type.split('.')[0]
             make_confusion_matrix(model, testing_data[0], testing_data[1], title, ONE_TENTH_DATA)
-
-
-
