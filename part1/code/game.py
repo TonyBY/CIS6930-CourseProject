@@ -1,8 +1,9 @@
 import os
 import numpy as np
 
-import utils
 from gameRegression import choose_model_player,predict_next_step
+
+
 def board(arr):
     print("     |     |      ")
     print("  {0}  |  {1}  |  {2}  ".format(arr[1], arr[2], arr[3]))
@@ -13,6 +14,7 @@ def board(arr):
     print("     |     |      ")
     print("  {0}  |  {1}  |  {2}".format(arr[7], arr[8], arr[9]))
     print("     |     |      ")
+
 
 def check_win(arr):
     #check win
@@ -32,6 +34,8 @@ def check_win(arr):
             and arr[7] != '7' and arr[8] != '8' and arr[9] != '9':
             return -1
     return 0
+
+
 def convert(arr):
     bits = []
     for i in arr:
@@ -43,6 +47,7 @@ def convert(arr):
             bits.append(0)
     return [bits[1:]]
 
+
 def choose_best(predicts, arr):
     predict_results = predicts[0]
     waiting_choices = list(np.argsort(predict_results))  
@@ -50,6 +55,7 @@ def choose_best(predicts, arr):
     while arr[choice] == 'X' or arr[choice] == 'O':
         choice = waiting_choices.pop()+1
     return choice
+
 
 def play(data):
     arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ]
@@ -96,17 +102,3 @@ def play(data):
     else:
         print('Draw!')
 
-    
-
-        
-        
-
-
-
-
-        
-
-
- 
-
-     
