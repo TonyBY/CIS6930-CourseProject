@@ -27,11 +27,17 @@ def load_multi(path, ONE_TENTH_DATA=False):
     inputs = data[:, :9]
     outputs = data[:, 9:]
 
+    print(outputs.shape)
+
+    temp_outputs = np.zeros(outputs.shape[0])
+    print(temp_outputs.shape)
+
     if ONE_TENTH_DATA:
         X = inputs
         y = outputs
+        y_temp = temp_outputs
         sss = StratifiedShuffleSplit(n_splits=1, test_size=0.1, random_state=0)
-        for train_index, test_index in sss.split(X, y):
+        for train_index, test_index in sss.split(X, y_temp):
             X_train, X_test = X[train_index], X[test_index]
             y_train, y_test = y[train_index], y[test_index]
             break
