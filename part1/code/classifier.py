@@ -20,7 +20,7 @@ def linear_svm_classifier(data, data_type, ONE_TENTH_DATA=False):
     evaluate_models('classifier', lsvm, X, y, data_type=data_type, ONE_TENTH_DATA=ONE_TENTH_DATA)
 
 def knn_classifier(data, encode=False, data_type=None, ONE_TENTH_DATA=False):
-    print("K-Newrest Neighbors Classifier")
+    print("K-Nearest Neighbors Classifier")
 
     X, y = data[0], data[1]
 

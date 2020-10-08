@@ -35,15 +35,6 @@ def predict_next_step(model, model_name, test):
         return np.transpose(linearRegression.linear_regression_predict(test,model))
     else:
         return model.predict(test)
-'''
-model_name = 'linear'
-data = utils.load_multi('../datasets-part1/tictac_multi.txt')
-player = choose_model_player(model_name, data)
-
-if model_name == 'linear':
-    predicts = predict_next_step(player, 'linear', [[1,0,0,0,-1,-1,0,1,1]])
-print(predicts)
-'''
 
 
 

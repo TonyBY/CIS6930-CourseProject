@@ -70,12 +70,12 @@ def play(data):
     print("Player1:X and Player2:O")
     while flag == 0:
         if player % 2 == 0:
-            print("Player X Chance:")
+            print("Player X Turn:")
             board(arr)
             choice = int(input())
             print('Player X goes to {0}!\n'.format(choice))
         else:
-            print("Player O Chance:")
+            print("Player O Turn:")
             board(arr)
             predicts = predict_next_step(model_player, modelName, convert(arr))
             choice = choose_best(predicts, arr)
