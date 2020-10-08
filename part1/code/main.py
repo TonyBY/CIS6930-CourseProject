@@ -31,12 +31,14 @@ def main(args):
         multi_data = utils.load_multi(args.data_path + multi_label)
         print("Starting game")
         game.play(multi_data)
-    else:
-        dataset = ['tictac_single.txt', 'tictac_multi.txt', 'tictac_final.txt']
-        regressors = ['k-nearest', 'linear', 'MLP']
-        classifiers = ['k-nearest', 'SVM', 'MLP']
 
-        if args.model_type == 'classification':
+    elif args.model_type == 'classification':
+            classifiers = ['k-nearest', 'SVM', 'MLP']
+
+            if args.encode:
+                dataset = ['tictac_single.txt', 'tictac_final.txt', 'tictac_multi.txt']
+            else:
+                dataset = ['tictac_single.txt', 'tictac_final.txt']
             for filename in dataset:
                 print(filename+'\n')
                 if 'single' in filename:
@@ -54,19 +56,20 @@ def main(args):
                         mlp_classifier(data, encode=args.encode, data_type=filename, ONE_TENTH_DATA=args.oneTenth)
             print('Finished Classification.')
 
-        elif args.model_type == 'regression':
-            data = utils.load_multi(args.data_path+'tictac_multi.txt')
-            for regressor in regressors:
-                if regressor == 'k-nearest':
-                    knearest(data)
-                elif regressor == 'linear':
-                    linear_regression(data)
-                elif regressor == 'MLP':
-                    multilayer_perceptron(data)
-            print('Finished Regression.')
+    elif args.model_type == 'regression':
+        regressors = ['k-nearest', 'linear', 'MLP']
+        data = utils.load_multi(args.data_path+'tictac_multi.txt')
+        for regressor in regressors:
+            if regressor == 'k-nearest':
+                knearest(data)
+            elif regressor == 'linear':
+                linear_regression(data)
+            elif regressor == 'MLP':
+                multilayer_perceptron(data)
+        print('Finished Regression.')
 
-        else:
-            print("ERROR: Invalid model type. Please enter regression or classification.")
+    else:
+        print("ERROR: Invalid model type. Please enter regression or classification.")
 
 
 if __name__ == '__main__':
