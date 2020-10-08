@@ -36,9 +36,6 @@ def main(args):
         regressors = ['k-nearest', 'linear', 'MLP']
         classifiers = ['k-nearest', 'SVM', 'MLP']
 
-        dataset = ['tictac_multi.txt']
-        classifiers = ['k-nearest']
-
         if args.model_type == 'classification':
             for filename in dataset:
                 print(filename+'\n')
