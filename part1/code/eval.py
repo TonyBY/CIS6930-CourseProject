@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.metrics import accuracy_score, hamming_loss, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import accuracy_score, hamming_loss, confusion_matrix, ConfusionMatrixDisplay, plot_confusion_matrix
 from sklearn.model_selection import KFold
 import math
 
@@ -70,8 +70,7 @@ def get_average_of_matrieces(matrix_list):
     return temp_matrix / number_of_matrix
 
 
-
-def plot_confusion_matrix(cm, labels, title, ONE_TENTH_DATA=False):
+def plot_confusion_matrix_single(cm, labels, title, ONE_TENTH_DATA=False):
     fig, ax = plt.subplots()
 
     if ONE_TENTH_DATA:
@@ -114,6 +113,56 @@ def plot_confusion_matrix(cm, labels, title, ONE_TENTH_DATA=False):
         display_labels = range(0, 9)
         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=display_labels)
         disp.plot(include_values=False, cmap='viridis', ax=ax, xticks_rotation='horizontal', values_format=None)
+
+    plt.savefig(file_path, dpi=600, bbox_inches='tight', pad_inches=0)
+
+
+def plot_confusion_matrix_multi(model, X, labels, title, ONE_TENTH_DATA=False):
+    fig, ax = plt.subplots()
+
+    if ONE_TENTH_DATA:
+        title = title + '_oneTenth'
+        file_path = '../results/%s.pdf' % title
+    else:
+        file_path = '../results/%s.pdf' % title
+    ax.set_title(title)
+
+    # print(max(labels))
+    if max(labels) > 9:
+        labels_sorted_idx = labels.argsort()
+        sorted_labels = labels[labels_sorted_idx]
+        sorted_X = X[labels_sorted_idx]
+
+        subsample = np.arange(0, labels.size, 2).tolist()
+        # print(subsample)
+        # print('\n')
+        # print(sorted_labels[subsample])
+        # print('\n')
+        # print(np.arange(0, max(sorted_labels[subsample]), math.ceil(max(sorted_labels[subsample]) // 9)).tolist())
+        plot_confusion_matrix(model, sorted_X[subsample], sorted_labels[subsample], labels=sorted_labels[subsample],
+                              normalize='true', ax=ax, include_values=False)
+
+        cnt = 0
+        for label in ax.xaxis.get_ticklabels():
+            interval = math.floor(len(subsample) // 9)
+            if cnt % interval == 0:
+                cnt += 1
+                continue
+            label.set_visible(False)
+            cnt += 1
+
+        cnt = 0
+        for label in ax.yaxis.get_ticklabels():
+            interval = math.floor(len(subsample) // 9)
+            if cnt % interval == 0:
+                cnt += 1
+                continue
+            label.set_visible(False)
+            cnt += 1
+    elif max(labels) < 2:
+        plot_confusion_matrix(model, X, labels, labels=[-1, +1], normalize='true', ax=ax, include_values=False)
+    else:
+        plot_confusion_matrix(model, X, labels, labels=range(0, 9), normalize='true', ax=ax, include_values=False)
 
     plt.savefig(file_path, dpi=600, bbox_inches='tight', pad_inches=0)
 
@@ -161,13 +210,12 @@ def evaluate_models(class_type, model, X, y, data_type=None, encode=False, ONE_T
         print("Exact Accuracy: %0.2f" % (accuracy))
         print("Hamming score (multi-class accuracy): %0.2f" % (hamming))
 
-        if class_type == 'classifier':
-            if encode or 'LinearSVC' in str(type(model)) or 'single' in data_type or 'final' in data_type:
-                print('\n Building Confusiton Matrix...')
-                cm, cm_labels = make_confusion_matrix(model, testing_data[0], testing_data[1])
-                if max(cm_labels) > max(cm_labels_to_use):
-                    cm_labels_to_use = cm_labels
-                confusion_matrix_list.append(cm)
+        if class_type == 'classifier' and ('single' in data_type or 'final' in data_type):
+            print('\n Building Confusiton Matrix...')
+            cm, cm_labels = make_confusion_matrix(model, testing_data[0], testing_data[1])
+            if max(cm_labels) > max(cm_labels_to_use):
+                cm_labels_to_use = cm_labels
+            confusion_matrix_list.append(cm)
 
     accuracy_list = np.array(accuracy_list)
     hamming_list = np.array(hamming_list)
@@ -177,7 +225,13 @@ def evaluate_models(class_type, model, X, y, data_type=None, encode=False, ONE_T
         print("\nMean Exact Accuracy: %0.2f (+/- %0.2f)" % (accuracy_list.mean(), accuracy_list.std() * 2))
         print("Mean Hamming Score: %0.2f (+/- %0.2f)\n\n" % (hamming_list.mean(), hamming_list.std() * 2))
 
-    if len(confusion_matrix_list) != 0:
+    if class_type == 'classifier' and 'multi' in data_type:
+        print('\n Ploting Confusiton Matrix...')
+        title = str(type(model)).strip('>').strip("'").split('.')[-1] + '_' + class_type + '_' + \
+                data_type.split('.')[0]
+        plot_confusion_matrix_multi(model, testing_data[0], testing_data[1], title, ONE_TENTH_DATA)
+
+    elif len(confusion_matrix_list) != 0:
         print("Calculation the averaged confusion matrix...")
         averaged_confusion_matrix = get_average_of_matrieces(confusion_matrix_list)
 
@@ -185,4 +239,4 @@ def evaluate_models(class_type, model, X, y, data_type=None, encode=False, ONE_T
         title = str(type(model)).strip('>').strip("'").split('.')[-1] + '_' + class_type + '_' + \
                 data_type.split('.')[0]
 
-        plot_confusion_matrix(averaged_confusion_matrix, cm_labels_to_use, title, ONE_TENTH_DATA)
+        plot_confusion_matrix_single(averaged_confusion_matrix, cm_labels_to_use, title, ONE_TENTH_DATA)

@@ -36,7 +36,7 @@ def main(args):
             classifiers = ['k-nearest', 'SVM', 'MLP']
 
             if args.encode:
-                dataset = ['tictac_single.txt', 'tictac_final.txt', 'tictac_multi.txt']
+                dataset = ['tictac_multi.txt']
             else:
                 dataset = ['tictac_single.txt', 'tictac_final.txt']
             for filename in dataset:
