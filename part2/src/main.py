@@ -1,4 +1,5 @@
 import argparse
+from sklearn.model_selection import train_test_split
 import torch
 from torchvision import transforms
 from IPython.display import Image, display
@@ -8,9 +9,9 @@ import os
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 
+from CNNRegressor import CNNRegressor
 from ColorizationNet import ColorizationNet
-from GrayscaleImageFolder import GrayscaleImageFolder
-from colorization_utils import load_images, augment_dataset, convert_to_LAB, train, validate, split_data_set
+from utils import load_images, split, augment_dataset, convert_to_LAB, train, validate
 
 
 def parse_args(args=None):
@@ -23,47 +24,78 @@ def parse_args(args=None):
                         help='Pre-trained model path of ColorizationNet')
     parser.add_argument('-save_images', action='store_true',
                         help='Cache grey image and colorized images of validation set.')
-    parser.add_argument('-split_dataset', action='store_true',
-                        help='Split the dataset into training set and validation set.')
-    parser.add_argument('-validation_size', default='50', help='the number of images in the validation set.')
-    parser.add_argument('-mode', default='eval', help='Option: train/eval')
+    parser.add_argument('-mode', default='train', help='Option: train/eval')
     parser.add_argument('-use_gpu', action='store_true',
                         help='Use gup if available.')
+    parser.add_argument('-model', default='regressor', help='Option: regressor/colorize')
     return parser.parse_args(args)
 
 
 def main(args):
+    ###Data Preprocessing####
     # Check if GPU is available
     use_gpu = torch.cuda.is_available() and args.use_gpu
 
     data_path = args.data_path
-    #creates tensor of all images
+    #creates tensor of all images and splits
     images = load_images(data_path=data_path)
-
+    train_images, test_images = split(images)
+   
     n = 10
+    print(train_images.shape)
     #augments images by a factor of n
-    images = augment_dataset(images,n)
+    train_images = augment_dataset(train_images,n)
+    #Convert images to L∗a∗b∗ color space and normalize between 0 and 1
+    train_images_LAB = convert_to_LAB(train_images)
+    test_images_LAB = convert_to_LAB(test_images)
+    print(train_images_LAB[-1,:,:,:])
+    print(a)
+    # output_test = test_images_LAB[:,1:3,:,:]
 
-    #Convert images to L∗a∗b∗ color space
-    images_LAB = convert_to_LAB(images)
+    train_loader = torch.utils.data.DataLoader(train_images_LAB, batch_size=16, shuffle=True)
+    test_loader = torch.utils.data.DataLoader(test_images_LAB, batch_size=16, shuffle=True)
+    for i in train_loader:
+        print(i)
+    print(a)
+    ###Model Init###
+    if args.model == "regressor":
+        model = CNNRegressor()
+    elif args.model == 'colorize':
+        model = ColorizationNet()
+    else:
+        raise ValueError('Invalid Model.')
 
-    #make train and test with input and output
-
-    
-    train_loader = torch.utils.data.DataLoader(train_imagefolder, batch_size=64, shuffle=True)
-
-    # Validation
-    val_transforms = transforms.Compose([transforms.Resize(256), transforms.CenterCrop(224)])
-    val_imagefolder = GrayscaleImageFolder(data_path + 'val', val_transforms)
-    val_loader = torch.utils.data.DataLoader(val_imagefolder, batch_size=64, shuffle=False)
-
-    model = ColorizationNet()
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=0.0)
 
+    if use_gpu:
+        model = model.cuda()
+        criterion = criterion.cuda()
+
     save_images = args.save_images
 
-    if args.mode == 'eval':
+ 
+    if args.mode == 'train':
+        # Make folders and set parameters
+        os.makedirs('../data/colorization/outputs/color', exist_ok=True)
+        os.makedirs('../data/colorization/outputs/gray', exist_ok=True)
+        os.makedirs('../data/regressor/ckpts/', exist_ok=True)
+        best_loss = 100000000
+        epochs = 10
+
+        # Train model
+        for epoch in range(epochs):
+            # Train for one epoch, then validate
+            train(train_loader, model, criterion, optimizer, epoch, args.model, use_gpu=args.use_gpu)
+            with torch.no_grad():
+                losses = validate(test_loader, model, criterion, epoch, args.model, use_gpu=args.use_gpu)
+            # Save checkpoint and replace old best model if current model is better
+            if losses < best_loss:
+                best_loss = losses
+                torch.save(model.state_dict(),
+                           '../data/regressor/ckpts/model-epoch-{}-losses-{:.3f}.pth'.format(epoch + 1, losses))
+    
+    elif args.mode == 'eval':
         # Load model
         pretrained = torch.load(
             args.model_path,
@@ -74,30 +106,9 @@ def main(args):
 
         # Validate
         with torch.no_grad():
-            validate(val_loader, model, criterion, save_images, 0, use_gpu=use_gpu)
-    elif args.mode == 'train':
-        if use_gpu:
-            criterion = criterion.cuda()
-            model = model.cuda()
-
-        # Make folders and set parameters
-        os.makedirs('../data/colorization/outputs/color', exist_ok=True)
-        os.makedirs('../data/colorization/outputs/gray', exist_ok=True)
-        os.makedirs('../data/colorization/checkpoints', exist_ok=True)
-        best_losses = 1e10
-        epochs = 100
-
-        # Train model
-        for epoch in range(epochs):
-            # Train for one epoch, then validate
-            train(train_loader, model, criterion, optimizer, epoch)
-            with torch.no_grad():
-                losses = validate(val_loader, model, criterion, save_images, epoch)
-            # Save checkpoint and replace old best model if current model is better
-            if losses < best_losses:
-                best_losses = losses
-                torch.save(model.state_dict(),
-                           '../data/colorization/checkpoints/model-epoch-{}-losses-{:.3f}.pth'.format(epoch + 1, losses))
+            validate(val_loader, model, criterion, save_images, 0, use_gpu=use_gpu)   
+    
+    
     elif args.mode == 'demo':
         # Show images
         image_pairs = [
