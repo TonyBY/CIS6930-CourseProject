@@ -1,11 +1,61 @@
 import numpy as np
-import os, time
+import cv2
+import os, time, glob
+import random
 from AverageMeter import AverageMeter
 import matplotlib.pyplot as plt
 import torch
 from skimage.color import lab2rgb
+from torchvision import transforms
+torch.set_default_tensor_type('torch.FloatTensor')
 
+#load images in tensor
+def load_images(data_path="../data/face_images/"):
+    dirname = os.path.dirname(__file__)
+    data_path = os.path.join(dirname, data_path)
+    files = glob.glob(str(data_path)+'*.jpg')
+    num_images = len(files)
+    data =[]
+    for f1 in files:
+        img = cv2.imread(f1)
+        data.append(img)
+    data_tensor = torch.Tensor(data).permute(0,3,1,2)
+    return data_tensor
 
+#scale rgb
+def scale_rgb(image):
+    scale = random.uniform(0.6, 1)
+    scaled_rgb_image = image*scale
+    return scaled_rgb_image
+
+#augment dataset n times
+def augment_dataset(images,n):
+    num_images = images.shape[0]
+    augmented_data = torch.empty(n*num_images, 3, 128, 128)
+    #random crop and random flip 
+    train_transforms = transforms.Compose([transforms.RandomResizedCrop((128,128)), transforms.RandomHorizontalFlip()])
+  
+    for i in range(n):
+        transformed_images = train_transforms(images)
+        for j, image in enumerate(transformed_images):
+            image = scale_rgb(image)
+            augmented_data[j] = image
+    return augmented_data
+
+#convert to L a b color space
+def convert_to_LAB(images):
+    num_images = images.shape[0]
+    LAB_data = torch.empty(num_images, 3, 128, 128)
+
+    images = images.permute(0,2,3,1)
+
+    for i, image in enumerate(images):
+        imageLAB = cv2.cvtColor(np.float32(image), cv2.COLOR_BGR2LAB)
+        imageLAB = torch.Tensor(imageLAB).permute(2,0,1)
+        LAB_data[i] = imageLAB
+    return LAB_data
+
+    
 # Move data into training and validation directories
 def split_data_set(data_path='../data/face_images/', size_of_validation_set=50):
     os.makedirs(data_path + 'train/class/', exist_ok=True) # 700 images

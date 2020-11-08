@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 from ColorizationNet import ColorizationNet
 from GrayscaleImageFolder import GrayscaleImageFolder
-from colorization_utils import train, validate, split_data_set
+from colorization_utils import load_images, augment_dataset, convert_to_LAB, train, validate, split_data_set
 
 
 def parse_args(args=None):
@@ -37,16 +37,19 @@ def main(args):
     use_gpu = torch.cuda.is_available() and args.use_gpu
 
     data_path = args.data_path
-    if args.split_dataset and path.exists(data_path + "image00000.jpg"):
-        split_data_set(data_path=data_path, size_of_validation_set=int(args.validation_size))
+    #creates tensor of all images
+    images = load_images(data_path=data_path)
 
+    n = 10
+    #augments images by a factor of n
+    images = augment_dataset(images,n)
 
-    # Make sure the images are there
-    display(Image(filename=data_path + 'train/class/image00000.jpg'))
+    #Convert images to L∗a∗b∗ color space
+    images_LAB = convert_to_LAB(images)
 
-    # Training
-    train_transforms = transforms.Compose([transforms.RandomResizedCrop(224), transforms.RandomHorizontalFlip()])
-    train_imagefolder = GrayscaleImageFolder(data_path + 'train', train_transforms)
+    #make train and test with input and output
+
+    
     train_loader = torch.utils.data.DataLoader(train_imagefolder, batch_size=64, shuffle=True)
 
     # Validation
