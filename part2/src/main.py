@@ -42,21 +42,15 @@ def main(args):
     train_images, test_images = split(images)
    
     n = 10
-    print(train_images.shape)
     #augments images by a factor of n
     train_images = augment_dataset(train_images,n)
     #Convert images to L∗a∗b∗ color space and normalize between 0 and 1
     train_images_LAB = convert_to_LAB(train_images)
     test_images_LAB = convert_to_LAB(test_images)
-    print(train_images_LAB[-1,:,:,:])
-    print(a)
-    # output_test = test_images_LAB[:,1:3,:,:]
 
     train_loader = torch.utils.data.DataLoader(train_images_LAB, batch_size=16, shuffle=True)
     test_loader = torch.utils.data.DataLoader(test_images_LAB, batch_size=16, shuffle=True)
-    for i in train_loader:
-        print(i)
-    print(a)
+   
     ###Model Init###
     if args.model == "regressor":
         model = CNNRegressor()
@@ -83,18 +77,21 @@ def main(args):
         best_loss = 100000000
         epochs = 10
 
+        loss_values = []
         # Train model
         for epoch in range(epochs):
             # Train for one epoch, then validate
             train(train_loader, model, criterion, optimizer, epoch, args.model, use_gpu=args.use_gpu)
             with torch.no_grad():
                 losses = validate(test_loader, model, criterion, epoch, args.model, use_gpu=args.use_gpu)
+            loss_values.append(losses/len(test_loader))
             # Save checkpoint and replace old best model if current model is better
             if losses < best_loss:
                 best_loss = losses
                 torch.save(model.state_dict(),
                            '../data/regressor/ckpts/model-epoch-{}-losses-{:.3f}.pth'.format(epoch + 1, losses))
-    
+        plt.plot(loss_values)
+        plt.show()
     elif args.mode == 'eval':
         # Load model
         pretrained = torch.load(

@@ -29,6 +29,5 @@ class CNNRegressor(nn.Module):
         )
 
     def forward(self, input):
-        input = input.unsqueeze(1)
         output = self.module7regressor(input)
         return output

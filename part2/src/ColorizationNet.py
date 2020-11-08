@@ -33,11 +33,10 @@ class ColorizationNet(nn.Module):
           nn.Conv2d(32, 2, kernel_size=3, stride=1, padding=1),
           nn.Upsample(scale_factor=2)
         )
-
+        
     def forward(self, input):
         # Pass input through ResNet-gray to extract features
         midlevel_features = self.midlevel_resnet(input)
-
         # Upsample to get colors
         output = self.upsample(midlevel_features)
         return output

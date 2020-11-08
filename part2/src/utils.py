@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import os, time, glob
+from PIL import Image
 import random
 from AverageMeter import AverageMeter
 import matplotlib.pyplot as plt
@@ -26,12 +27,24 @@ def load_images(data_path="../data/face_images/"):
         img = cv2.imread(f1)
         data.append(img)
     data_tensor = torch.Tensor(data).permute(0,3,1,2)
+    # for image in data_tensor:
+    #     # print(image)
+    #     # print(a)
+    #     print(image.shape)
+    #     new_image = np.array(image.permute(1,2,0))
+    #     plt.imshow(cv2.cvtColor(new_image.astype('uint8'), cv2.COLOR_BGR2RGB))
+    #     plt.show()
+    #     print(a)
     return data_tensor
 
 #scale rgb
 def scale_rgb(image):
+    sample = image.permute(1,2,0)
+   
+   
     scale = random.uniform(0.6, 1)
     scaled_rgb_image = image*scale
+
     return scaled_rgb_image
 
 #augment dataset n times
@@ -45,7 +58,6 @@ def augment_dataset(images,n):
     image_num = 0
     for i in range(n):
         transformed_images = train_transforms(images)
-        print(transformed_images.shape)
         for image in transformed_images:
             image = scale_rgb(image)
             augmented_data[image_num] = image
@@ -60,9 +72,10 @@ def convert_to_LAB(images):
     images = images.permute(0,2,3,1)
 
     for i, image in enumerate(images):
-        imageLAB = cv2.cvtColor(np.float32(image), cv2.COLOR_BGR2LAB)
+        image = (np.array(image).astype("float32")) / 255      
+        imageLAB = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
         imageLAB = torch.Tensor(imageLAB).permute(2,0,1)
-        imageLAB = (imageLAB + 128) / 255
+       
         LAB_data[i] = imageLAB
     return LAB_data
 
@@ -71,9 +84,9 @@ def train(train_loader, model, criterion, optimizer, epoch, model_type, use_gpu=
     losses = AverageMeter()
     model.train()
     for i, image in enumerate(train_loader):
-        L_channel = image[:,0,:,:]
+        L_channel = image[:,0,:,:]/100
+        L_channel = L_channel.unsqueeze(1)
         ab_channel = image[:,1:3,:,:]
-        
         if use_gpu: 
             L_channel, ab_channel = L_channel.cuda(), ab_channel.cuda()
         out_ab = model(L_channel)
@@ -100,9 +113,9 @@ def validate(test_loader, model, criterion, epoch, model_type, use_gpu=False):
 
     already_saved_images = False
     for i, image in enumerate(test_loader):
-        L_channel = image[:,0,:,:]
+        L_channel = image[:,0,:,:]/100
+        L_channel = L_channel.unsqueeze(1)
         ab_channel = image[:,1:3,:,:]
-       
         if use_gpu: 
             L_channel, ab_channel = L_channel.cuda(), ab_channel.cuda()
         if model_type == 'regressor':
