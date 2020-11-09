@@ -9,8 +9,7 @@ import os
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 
-from CNNRegressor import CNNRegressor
-from ColorizationNet import ColorizationNet
+from Colorize import Colorize
 from utils import load_images, split, augment_dataset, convert_to_LAB, train, validate
 
 
@@ -20,14 +19,14 @@ def parse_args(args=None):
     )
     parser.add_argument('-data_path', default='../data/face_images/',
                         help='data path of file containing the face images')
-    parser.add_argument('-model_path', default='../data/colorization/checkpoints/model-epoch-1-losses-0.004.pth/',
-                        help='Pre-trained model path of ColorizationNet')
+    parser.add_argument('-model_path', default='../data/colorize/checkpoints/model-epoch-1-losses-0.004.pth/',
+                        help='Pre-trained model path of Colorize')
     parser.add_argument('-save_images', action='store_true',
                         help='Cache grey image and colorized images of validation set.')
     parser.add_argument('-mode', default='train', help='Option: train/eval')
     parser.add_argument('-use_gpu', action='store_true',
                         help='Use gup if available.')
-    parser.add_argument('-model', default='regressor', help='Option: regressor/colorize')
+    parser.add_argument('-model', default='colorize', help='Option: regressor/colorize')
     return parser.parse_args(args)
 
 
@@ -50,17 +49,17 @@ def main(args):
 
     train_loader = torch.utils.data.DataLoader(train_images_LAB, batch_size=16, shuffle=True)
     test_loader = torch.utils.data.DataLoader(test_images_LAB, batch_size=16, shuffle=True)
-   
+    
     ###Model Init###
     if args.model == "regressor":
         model = CNNRegressor()
     elif args.model == 'colorize':
-        model = ColorizationNet()
+        model = Colorize()
     else:
         raise ValueError('Invalid Model.')
 
     criterion = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=0.0)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, weight_decay=0.0)
 
     if use_gpu:
         model = model.cuda()
@@ -71,11 +70,14 @@ def main(args):
  
     if args.mode == 'train':
         # Make folders and set parameters
-        os.makedirs('../data/colorization/outputs/color', exist_ok=True)
-        os.makedirs('../data/colorization/outputs/gray', exist_ok=True)
+        os.makedirs('../data/colorize/outputs/color', exist_ok=True)
+        os.makedirs('../data/colorize/outputs/gray', exist_ok=True)
+        os.makedirs('../data/regressor/outputs/color', exist_ok=True)
+        os.makedirs('../data/regressor/outputs/gray', exist_ok=True)
         os.makedirs('../data/regressor/ckpts/', exist_ok=True)
+        os.makedirs('../data/colorize/ckpts/', exist_ok=True)
         best_loss = 100000000
-        epochs = 10
+        epochs = 30
 
         loss_values = []
         # Train model
@@ -83,13 +85,17 @@ def main(args):
             # Train for one epoch, then validate
             train(train_loader, model, criterion, optimizer, epoch, args.model, use_gpu=args.use_gpu)
             with torch.no_grad():
-                losses = validate(test_loader, model, criterion, epoch, args.model, use_gpu=args.use_gpu)
+                losses = validate(test_loader, model, criterion, args.save_images, epoch, args.model, use_gpu=args.use_gpu)
             loss_values.append(losses/len(test_loader))
             # Save checkpoint and replace old best model if current model is better
             if losses < best_loss:
                 best_loss = losses
-                torch.save(model.state_dict(),
-                           '../data/regressor/ckpts/model-epoch-{}-losses-{:.3f}.pth'.format(epoch + 1, losses))
+                if args.model == "colorize":
+                    torch.save(model.state_dict(),
+                            '../data/colorize/ckpts/model-epoch-{}-losses-{:.4f}.pth'.format(epoch + 1, losses))
+                elif args.model == "regressor":
+                    torch.save(model.state_dict(),
+                            '../data/regressor/ckpts/model-epoch-{}-losses-{:.4f}.pth'.format(epoch + 1, losses))
         plt.plot(loss_values)
         plt.show()
     elif args.mode == 'eval':
@@ -100,19 +106,20 @@ def main(args):
 
 
         model.load_state_dict(pretrained)
-
+        if use_gpu:
+            model.cuda()
         # Validate
         with torch.no_grad():
-            validate(val_loader, model, criterion, save_images, 0, use_gpu=use_gpu)   
+            validate(test_loader, model, criterion, save_images, 0, args.model, use_gpu=use_gpu)   
     
     
     elif args.mode == 'demo':
         # Show images
         image_pairs = [
-            ('../data/colorization/outputs/color/img-0-epoch-0.jpg',
-             '../data/colorization/outputs/gray/img-0-epoch-0.jpg'),
-            ('../data/colorization/outputs/color/img-1-epoch-0.jpg',
-             '../data/colorization/outputs/gray/img-1-epoch-0.jpg')]
+            ('../data/colorize/outputs/color/img-0-epoch-0.jpg',
+             '../data/colorize/outputs/gray/img-0-epoch-0.jpg'),
+            ('../data/colorize/outputs/color/img-1-epoch-0.jpg',
+             '../data/colorize/outputs/gray/img-1-epoch-0.jpg')]
         for c, g in image_pairs:
             color = mpimg.imread(c)
             gray = mpimg.imread(g)

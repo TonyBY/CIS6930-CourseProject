@@ -3,7 +3,7 @@ import torchvision.models as models
 
 
 class CNNRegressor(nn.Module):
-    def __init__(self, input_size=128):
+    def __init__(self):
         super(CNNRegressor, self).__init__()
         self.module7regressor = nn.Sequential(
           nn.Conv2d(1, 3, kernel_size=3, stride=2, padding=1),
