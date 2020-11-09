@@ -8,7 +8,9 @@ import os
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 
-from ColorizationNet import ColorizationNet
+from Colorize import Colorize
+from Regressor import Regressor
+
 from GrayscaleImageFolder import GrayscaleImageFolder
 from colorization_utils import train, validate, split_data_set
 
@@ -26,7 +28,7 @@ def parse_args(args=None):
     parser.add_argument('-split_dataset', action='store_true',
                         help='Split the dataset into training set and validation set.')
     parser.add_argument('-validation_size', default='50', help='the number of images in the validation set.')
-    parser.add_argument('-mode', default='eval', help='Option: train/eval')
+    parser.add_argument('-mode', default='train', help='Option: train/eval')
     parser.add_argument('-use_gpu', action='store_true',
                         help='Use gup if available.')
     return parser.parse_args(args)
@@ -45,7 +47,7 @@ def main(args):
     display(Image(filename=data_path + 'train/class/image00000.jpg'))
 
     # Training
-    train_transforms = transforms.Compose([transforms.RandomResizedCrop(224), transforms.RandomHorizontalFlip()])
+    train_transforms = transforms.Compose([transforms.RandomResizedCrop((128,128)), transforms.RandomHorizontalFlip()])
     train_imagefolder = GrayscaleImageFolder(data_path + 'train', train_transforms)
     train_loader = torch.utils.data.DataLoader(train_imagefolder, batch_size=64, shuffle=True)
 
@@ -54,9 +56,9 @@ def main(args):
     val_imagefolder = GrayscaleImageFolder(data_path + 'val', val_transforms)
     val_loader = torch.utils.data.DataLoader(val_imagefolder, batch_size=64, shuffle=False)
 
-    model = ColorizationNet()
+    model = Colorize()
     criterion = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=0.0)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=0.0)
 
     save_images = args.save_images
 
@@ -68,6 +70,8 @@ def main(args):
 
 
         model.load_state_dict(pretrained)
+        if use_gpu:
+            model.cuda()
 
         # Validate
         with torch.no_grad():
@@ -82,19 +86,20 @@ def main(args):
         os.makedirs('../data/colorization/outputs/gray', exist_ok=True)
         os.makedirs('../data/colorization/checkpoints', exist_ok=True)
         best_losses = 1e10
-        epochs = 100
+        epochs = 20
 
         # Train model
         for epoch in range(epochs):
             # Train for one epoch, then validate
-            train(train_loader, model, criterion, optimizer, epoch)
+            train(train_loader, model, criterion, optimizer, epoch,use_gpu=use_gpu)
             with torch.no_grad():
-                losses = validate(val_loader, model, criterion, save_images, epoch)
+                losses = validate(val_loader, model, criterion, save_images, epoch,use_gpu=use_gpu)
             # Save checkpoint and replace old best model if current model is better
             if losses < best_losses:
                 best_losses = losses
                 torch.save(model.state_dict(),
                            '../data/colorization/checkpoints/model-epoch-{}-losses-{:.3f}.pth'.format(epoch + 1, losses))
+                print('done saving')
     elif args.mode == 'demo':
         # Show images
         image_pairs = [

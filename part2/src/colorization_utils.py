@@ -43,13 +43,17 @@ def train(train_loader, model, criterion, optimizer, epoch, use_gpu=False):
     end = time.time()
     for i, (input_gray, input_ab, target) in enumerate(train_loader):
         # Use GPU if available
-        if use_gpu: input_gray, input_ab, target = input_gray.cuda(), input_ab.cuda(), target.cuda()
+        # intput_gray = input_gray/100
+        if use_gpu: 
+            input_gray, input_ab, target = input_gray.cuda(), input_ab.cuda(), target.cuda()
 
         # Record time to load data (above)
         data_time.update(time.time() - end)
-
+        print(type(input_gray))
         # Run forward pass
         output_ab = model(input_gray)
+        
+        # input_ab = input_ab.mean([2,3],True)
         loss = criterion(output_ab, input_ab)
         losses.update(loss.item(), input_gray.size(0))
 
@@ -86,7 +90,9 @@ def validate(val_loader, model, criterion, save_images, epoch, use_gpu=False):
         data_time.update(time.time() - end)
 
     # Use GPU
-    if use_gpu: input_gray, input_ab, target = input_gray.cuda(), input_ab.cuda(), target.cuda()
+    if use_gpu: 
+        print('using gpu')
+        input_gray, input_ab, target = input_gray.cuda(), input_ab.cuda(), target.cuda()
 
     # Run model and record loss
     output_ab = model(input_gray) # throw away class predictions
