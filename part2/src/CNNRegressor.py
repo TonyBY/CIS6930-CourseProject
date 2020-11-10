@@ -28,6 +28,6 @@ class CNNRegressor(nn.Module):
           nn.ReLU()
         )
 
-    def forward(self, input):
+    def forward(self, input,use_tanh):
         output = self.module7regressor(input)
         return output
