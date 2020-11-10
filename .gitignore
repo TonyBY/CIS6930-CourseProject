@@ -139,3 +139,11 @@ cython_debug/
 
 # Pycharm
 .idea/
+
+# Virtual Environments
+# myenv
+# *.whl
+
+# data
+# data
+# out
