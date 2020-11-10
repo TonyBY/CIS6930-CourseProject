@@ -5,7 +5,6 @@ from PIL import Image
 import random
 import matplotlib.pyplot as plt
 import torch.nn as nn
-import tensorflow as tf
 
 import torch
 from torchvision import transforms
@@ -54,8 +53,8 @@ def augment_dataset(images,n):
     augmented_data = torch.empty((n*num_images)+num_images, 3, 128, 128)
     
     #random crop and random flip 
-    # crop_transform = transforms.Compose([transforms.RandomResizedCrop((128,128)),transforms.ToTensor()])
-    # flip_transforms = transforms.Compose([transforms.RandomHorizontalFlip(p=.7)])
+    crop_transform = transforms.Compose([transforms.RandomResizedCrop((128,128))])
+    flip_transforms = transforms.Compose([transforms.RandomHorizontalFlip(p=.7)])
   
     image_num = 0
 
@@ -67,18 +66,10 @@ def augment_dataset(images,n):
     #augment training set and store (iterate over 10 times)
     for i in range(n):
         for image in images:
-            # if flip_coin:
-            #     transformed_image = np.fliplr(np.array(image))
-            # else:
-            #     transformed_image = image
-            # if flip_coin:
-            #     transformed_image = np.fliplr(np.array(transformed_image))
-            tf.random_crop(image, image)
-            
-            transformed_image = cv2.resize(np.array(transformed_image), (128,128), interpolation = cv2.INTER_AREA) 
+            if flip_coin:
+                transformed_image = crop_transform(image)
+            transformed_image = flip_transforms(image)
             transformed_image = scale_rgb(transformed_image)
-            print(transformed_image)
-            print(a)
             augmented_data[image_num] = torch.Tensor(np.array(transformed_image).astype(np.uint8))
             image_num+=1
     return augmented_data

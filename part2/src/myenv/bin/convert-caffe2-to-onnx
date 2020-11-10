@@ -1,4 +1,4 @@
-#!/home/anthony/projects/proj2/CIS6930-CourseProject/part2/src/myenv/bin/python2
+#!/home/anthony/projects/proj2/CIS6930-CourseProject/part2/src/myenv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
