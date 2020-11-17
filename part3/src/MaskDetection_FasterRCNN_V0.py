@@ -13,6 +13,7 @@ import matplotlib.patches as patches
 import os
 import _pickle as pickle
 
+
 def generate_box(obj):
     xmin = int(obj.find('xmin').text)
     ymin = int(obj.find('ymin').text)
@@ -20,6 +21,7 @@ def generate_box(obj):
     ymax = int(obj.find('ymax').text)
 
     return [xmin, ymin, xmax, ymax]
+
 
 def generate_label(obj):
     if obj.find('name').text == "with_mask":
@@ -89,8 +91,10 @@ class MaskDataset(object):
     def __len__(self):
         return len(self.imgs)
 
+
 def collate_fn(batch):
     return tuple(zip(*batch))
+
 
 def get_model_instance_segmentation(num_classes):
     # load an instance segmentation model pre-trained pre-trained on COCO
@@ -120,9 +124,11 @@ def plot_image(img_tensor, annotation):
         # Add the patch to the Axes
         ax.add_patch(rect)
 
-    plt.show()
+    # plt.show()
+    plt.imsave(arr=img.permute(1, 2, 0), fname="../data/data2/output.jpg")
 
-if __name__ ==  "__main__":
+
+if __name__ == "__main__":
     imgs_path = "../data/data2/images/"
     labels_path: str = "../data/data2/annotations/"
     # imgs = list(sorted(os.listdir(imgs_path)))
