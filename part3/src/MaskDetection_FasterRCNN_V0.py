@@ -14,7 +14,7 @@ def parse_args(args=None):
                         help='data path of file containing the images')
     parser.add_argument('-labels_path', default='../data/data2/annotations/',
                         help='data path of file containing the annotations')
-    parser.add_argument('-model_path', default='../data/data2/FasterRCNN/checkpoints/model-epoch-1-losses-0.006.pth/',
+    parser.add_argument('-model_path', default='../data/data2/FasterRCNN/checkpoints/model-epoch-1-losses-0.006.pth',
                         help='Pre-trained model path of FasterRCNN')
     parser.add_argument('-mode', default='eval', help='Option: train/eval')
 
@@ -30,13 +30,13 @@ def main(args):
     data_transform = transforms.Compose([transforms.ToTensor()])
 
     dataset = MaskDataset(data_transform, imgs_path, labels_path)
-    data_loader = torch.utils.data.DataLoader(dataset, batch_size=16, collate_fn=collate_fn, shuffle=True)
+    data_loader = torch.utils.data.DataLoader(dataset, batch_size=4, collate_fn=collate_fn, shuffle=False)
 
     model = get_model_instance_segmentation(3)
 
     if args.mode == 'train':
         # Train
-        num_epochs = 1
+        num_epochs = 100
         model.to(device)
 
         # parameters
@@ -61,6 +61,8 @@ def main(args):
                 imgs = list(img.to(device) for img in imgs)
                 annotations = [{k: v.to(device) for k, v in t.items()} for t in annotations]
                 loss_dict = model([imgs[0]], [annotations[0]])
+                # print("#########################")
+                # print("loss_dict: ", loss_dict)
                 losses = sum(loss for loss in loss_dict.values())
 
                 if losses < best_losses:
@@ -80,20 +82,28 @@ def main(args):
         # Load model
         model2 = get_model_instance_segmentation(3)
         model2.load_state_dict(torch.load(args.model_path))
-        model2.eval()
+
         model2.to(device)
 
+        model2.train()
         for imgs, annotations in data_loader:
             imgs = list(img.to(device) for img in imgs)
             annotations = [{k: v.to(device) for k, v in t.items()} for t in annotations]
+
+            with torch.no_grad():
+                loss_dict = model2([imgs[0]], [annotations[0]])
+                losses = sum(loss for loss in loss_dict.values())
+
+            print(f'Eval Loss: {losses}')
             break
 
+        model2.eval()
         pred2 = model2(imgs)
 
         print("Prediction")
-        plot_image(imgs[2], pred2[2], "prediction")
+        plot_image(imgs[3], pred2[3], "prediction")
         print("Target")
-        plot_image(imgs[2], annotations[2], "target")
+        plot_image(imgs[3], annotations[3], "target")
 
     else:
         raise ValueError('mode can only be train, or eval.')

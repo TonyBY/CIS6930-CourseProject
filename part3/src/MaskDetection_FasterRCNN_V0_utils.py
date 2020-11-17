@@ -84,4 +84,5 @@ def plot_image(img_tensor, annotation, file_name):
         ax.add_patch(rect)
 
     # plt.show()
-    plt.imsave(arr=img.permute(1, 2, 0), fname="../data/data2/FasterRCNN/outputs/%s.jpg" % file_name)
+    # plt.imsave(arr=img.permute(1, 2, 0), fname="../data/data2/FasterRCNN/outputs/%s.jpg" % file_name)
+    plt.savefig("../data/data2/FasterRCNN/outputs/%s.jpg" % file_name, dpi=600, bbox_inches='tight', pad_inches=0)
