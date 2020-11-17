@@ -150,4 +150,11 @@ part2/data
 .DS_Store
 
 # part3 data
-part3/data/data2/
+part3/data/
+part3/code/all_data.csv
+part3/code/data1.csv
+part3/code/data2.csv
+part3/code/data3.csv
+part3/code/data1.pkl
+part3/code/data2.pkl
+part3/code/data3.pkl
