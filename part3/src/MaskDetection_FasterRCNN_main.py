@@ -10,10 +10,10 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser(
         description='A CNN based image colorizer.'
     )
-    parser.add_argument('-imgs_path', default='../data/data2/images/',
-                        help='data path of file containing the images')
-    parser.add_argument('-labels_path', default='../data/data2/annotations/',
-                        help='data path of file containing the annotations')
+    parser.add_argument('-data_path', default='../data/data2/',
+                        help='data path of file containing the data')
+    # parser.add_argument('-labels_path', default='../data/data2/annotations/',
+    #                     help='data path of file containing the annotations')
     parser.add_argument('-model_path', default='../data/data2/FasterRCNN/checkpoints/model-epoch-1-losses-0.006.pth',
                         help='Pre-trained model path of FasterRCNN')
     parser.add_argument('-mode', default='eval', help='Option: train/eval')
@@ -24,8 +24,12 @@ def parse_args(args=None):
 def main(args):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-    imgs_path = args.imgs_path
-    labels_path = args.labels_path
+    if args.mode == 'train':
+        imgs_path = args.data_path + "training/images/"
+        labels_path = args.data_path + "training/annotations/"
+    elif args.mode == "eval":
+        imgs_path = args.data_path + "testing/images/"
+        labels_path = args.data_path + "testing/annotations/"
 
     data_transform = transforms.Compose([transforms.ToTensor()])
 
