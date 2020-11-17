@@ -39,7 +39,7 @@ def main(args):
     if args.mode == 'train':
         data_loader = torch.utils.data.DataLoader(dataset, batch_size=4, collate_fn=collate_fn, shuffle=False)
         # Train
-        num_epochs = 100
+        num_epochs = 300
         model.to(device)
 
         # parameters
@@ -53,7 +53,7 @@ def main(args):
         os.makedirs('../data/data2/FasterRCNN/outputs', exist_ok=True)
         os.makedirs('../data/data2/FasterRCNN/checkpoints', exist_ok=True)
 
-        best_losses = 1e10
+        best_losses = 0.001
 
         for epoch in range(num_epochs):
             model.train()
@@ -77,7 +77,7 @@ def main(args):
                 optimizer.zero_grad()
                 losses.backward()
                 optimizer.step()
-                print(f'Iteration: {i}/{len_dataloader}, Loss: {losses}')
+                print(f'Epoch: {epoch}, Batch: {i}/{len_dataloader}, Loss: {losses}')
                 epoch_loss += losses
             print(epoch_loss)
 
