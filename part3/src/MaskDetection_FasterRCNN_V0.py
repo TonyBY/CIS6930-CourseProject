@@ -107,7 +107,7 @@ def get_model_instance_segmentation(num_classes):
     return model
 
 
-def plot_image(img_tensor, annotation):
+def plot_image(img_tensor, annotation, file_name):
     fig, ax = plt.subplots(1)
     img = img_tensor.cpu().data
 
@@ -125,7 +125,7 @@ def plot_image(img_tensor, annotation):
         ax.add_patch(rect)
 
     # plt.show()
-    plt.imsave(arr=img.permute(1, 2, 0), fname="../data/data2/FasterRCNN/outputs")
+    plt.imsave(arr=img.permute(1, 2, 0), fname="../data/data2/FasterRCNN/outputs/%s.jpg" % file_name)
 
 
 if __name__ == "__main__":
@@ -185,3 +185,11 @@ if __name__ == "__main__":
             print(f'Iteration: {i}/{len_dataloader}, Loss: {losses}')
             epoch_loss += losses
         print(epoch_loss)
+
+    model.eval()
+    preds = model(imgs)
+
+    print("Prediction")
+    plot_image(imgs[2], preds[2], "prediction")
+    print("Target")
+    plot_image(imgs[2], annotations[2], "target")
