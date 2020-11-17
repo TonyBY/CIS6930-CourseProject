@@ -33,7 +33,7 @@ def main(args):
 
     data_transform = transforms.Compose([transforms.ToTensor()])
 
-    dataset = MaskDataset(data_transform, imgs_path, labels_path)
+    dataset = MaskDataset(data_transform, imgs_path, labels_path, args.mode)
     model = get_model_instance_segmentation(3)
 
     if args.mode == 'train':
@@ -106,9 +106,9 @@ def main(args):
             pred2 = model2(imgs)
 
             print("Prediction")
-            plot_image(imgs[3], pred2[3], "prediction_%s" % i)
+            plot_image(imgs[0], pred2[0], "prediction_%s" % i)
             print("Target")
-            plot_image(imgs[3], annotations[3], "target_%s" % i)
+            plot_image(imgs[0], annotations[0], "target_%s" % i)
 
             i += 1
 

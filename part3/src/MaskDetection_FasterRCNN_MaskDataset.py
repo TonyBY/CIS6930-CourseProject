@@ -4,14 +4,17 @@ import os
 from MaskDetection_FasterRCNN_utils import generate_target
 
 class MaskDataset(object):
-    def __init__(self, transforms, imgs_path, labels_path):
+    def __init__(self, transforms, imgs_path, labels_path, mode):
         self.transforms = transforms
         # load all image files, sorting them to ensure that they are aligned
         self.imgs = list(sorted(os.listdir(imgs_path)))
         self.imgs_path = imgs_path
         self.labels_path = labels_path
+        self.mode = mode
 
     def __getitem__(self, idx):
+        if self.mode == "eval":
+            idx = idx + 842
         # load images ad masks
         file_image = 'maksssksksss' + str(idx) + '.png'
         file_label = 'maksssksksss' + str(idx) + '.xml'
