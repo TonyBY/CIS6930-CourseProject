@@ -176,7 +176,7 @@ if __name__ == "__main__":
             if losses < best_losses:
                 best_losses = losses
                 torch.save(model.state_dict(),
-                           '../data/data2/checkpoints/model-epoch-{}-losses-{:.3f}.pth'.format(epoch + 1, losses))
+                           '../data/data2/FasterRCNN/checkpoints/model-epoch-{}-losses-{:.3f}.pth'.format(epoch + 1, losses))
                 print('done saving')
 
             optimizer.zero_grad()
