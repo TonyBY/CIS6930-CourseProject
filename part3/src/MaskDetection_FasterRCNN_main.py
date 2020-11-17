@@ -34,11 +34,10 @@ def main(args):
     data_transform = transforms.Compose([transforms.ToTensor()])
 
     dataset = MaskDataset(data_transform, imgs_path, labels_path)
-    data_loader = torch.utils.data.DataLoader(dataset, batch_size=4, collate_fn=collate_fn, shuffle=False)
-
     model = get_model_instance_segmentation(3)
 
     if args.mode == 'train':
+        data_loader = torch.utils.data.DataLoader(dataset, batch_size=4, collate_fn=collate_fn, shuffle=False)
         # Train
         num_epochs = 100
         model.to(device)
@@ -83,31 +82,37 @@ def main(args):
             print(epoch_loss)
 
     elif args.mode == 'eval':
+        data_loader = torch.utils.data.DataLoader(dataset, batch_size=1, collate_fn=collate_fn, shuffle=False)
         # Load model
         model2 = get_model_instance_segmentation(3)
         model2.load_state_dict(torch.load(args.model_path))
 
         model2.to(device)
 
-        model2.train()
+        i = 0
+        losses = 0
         for imgs, annotations in data_loader:
             imgs = list(img.to(device) for img in imgs)
             annotations = [{k: v.to(device) for k, v in t.items()} for t in annotations]
 
+            model2.train()
             with torch.no_grad():
                 loss_dict = model2([imgs[0]], [annotations[0]])
-                losses = sum(loss for loss in loss_dict.values())
+                losses += sum(loss for loss in loss_dict.values())
 
-            print(f'Eval Loss: {losses}')
-            break
+            # print(f'Eval Loss: {losses}')
 
-        model2.eval()
-        pred2 = model2(imgs)
+            model2.eval()
+            pred2 = model2(imgs)
 
-        print("Prediction")
-        plot_image(imgs[3], pred2[3], "prediction")
-        print("Target")
-        plot_image(imgs[3], annotations[3], "target")
+            print("Prediction")
+            plot_image(imgs[3], pred2[3], "prediction_%s" % i)
+            print("Target")
+            plot_image(imgs[3], annotations[3], "target_%s" % i)
+
+            i += 1
+
+        print(f'Eval Loss: {losses/float(i)}')
 
     else:
         raise ValueError('mode can only be train, or eval.')
