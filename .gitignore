@@ -145,3 +145,6 @@ myenv
 
 # part2 data
 part2/data
+
+# Mac
+.DS_Store
