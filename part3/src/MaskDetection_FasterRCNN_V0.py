@@ -14,9 +14,9 @@ def parse_args(args=None):
                         help='data path of file containing the images')
     parser.add_argument('-labels_path', default='../data/data2/annotations/',
                         help='data path of file containing the annotations')
-    parser.add_argument('-model_path', default='../data/data2/FasterRCNN/checkpoints/model-epoch-1-losses-0.017.pth/',
+    parser.add_argument('-model_path', default='../data/data2/FasterRCNN/checkpoints/model-epoch-1-losses-0.006.pth/',
                         help='Pre-trained model path of FasterRCNN')
-    parser.add_argument('-mode', default='train', help='Option: train/eval')
+    parser.add_argument('-mode', default='eval', help='Option: train/eval')
 
     return parser.parse_args(args)
 
