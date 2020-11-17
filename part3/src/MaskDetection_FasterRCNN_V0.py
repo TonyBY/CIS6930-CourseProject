@@ -125,7 +125,7 @@ def plot_image(img_tensor, annotation):
         ax.add_patch(rect)
 
     # plt.show()
-    plt.imsave(arr=img.permute(1, 2, 0), fname="../data/data2/output.jpg")
+    plt.imsave(arr=img.permute(1, 2, 0), fname="../data/data2/FasterRCNN/outputs")
 
 
 if __name__ == "__main__":
@@ -156,6 +156,12 @@ if __name__ == "__main__":
 
     len_dataloader = len(data_loader)
 
+    # Make folders and set parameters
+    os.makedirs('../data/data2/FasterRCNN/outputs', exist_ok=True)
+    os.makedirs('../data/data2/FasterRCNN/checkpoints', exist_ok=True)
+
+    best_losses = 1e10
+
     for epoch in range(num_epochs):
         model.train()
         i = 0
@@ -166,6 +172,12 @@ if __name__ == "__main__":
             annotations = [{k: v.to(device) for k, v in t.items()} for t in annotations]
             loss_dict = model([imgs[0]], [annotations[0]])
             losses = sum(loss for loss in loss_dict.values())
+
+            if losses < best_losses:
+                best_losses = losses
+                torch.save(model.state_dict(),
+                           '../data/data2/checkpoints/model-epoch-{}-losses-{:.3f}.pth'.format(epoch + 1, losses))
+                print('done saving')
 
             optimizer.zero_grad()
             losses.backward()
