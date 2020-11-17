@@ -139,3 +139,15 @@ cython_debug/
 
 # Pycharm
 .idea/
+
+# virtual environment
+myenv
+
+# part2 data
+part2/data
+
+# Mac
+.DS_Store
+
+# part3 data
+part3/data/data2/
