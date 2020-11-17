@@ -14,7 +14,7 @@ def parse_args(args=None):
                         help='data path of file containing the data')
     # parser.add_argument('-labels_path', default='../data/data2/annotations/',
     #                     help='data path of file containing the annotations')
-    parser.add_argument('-model_path', default='../data/data2/FasterRCNN/checkpoints/model-epoch-1-losses-0.006.pth',
+    parser.add_argument('-model_path', default='../data/data2/FasterRCNN/checkpoints/model-epoch-82-losses-0.000.pth',
                         help='Pre-trained model path of FasterRCNN')
     parser.add_argument('-mode', default='eval', help='Option: train/eval')
 
@@ -45,7 +45,7 @@ def main(args):
 
         # parameters
         params = [p for p in model.parameters() if p.requires_grad]
-        optimizer = torch.optim.SGD(params, lr=0.005,
+        optimizer = torch.optim.SGD(params, lr=0.001,
                                     momentum=0.9, weight_decay=0.0005)
 
         len_dataloader = len(data_loader)
@@ -72,7 +72,7 @@ def main(args):
                 if losses < best_losses:
                     best_losses = losses
                     torch.save(model.state_dict(),
-                               '../data/data2/FasterRCNN/checkpoints/model-epoch-{}-losses-{:.3f}.pth'.format(epoch + 1, losses))
+                               '../data/data2/FasterRCNN/checkpoints/model-epoch-{}-losses-{:.4f}.pth'.format(epoch + 1, losses))
                     print('done saving')
 
                 optimizer.zero_grad()
