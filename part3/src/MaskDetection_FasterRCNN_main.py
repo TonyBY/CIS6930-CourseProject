@@ -2,8 +2,8 @@ from torchvision import transforms
 import os
 import argparse
 
-from MaskDetection_FasterRCNN_V0_utils import *
-from MaskDataset import MaskDataset
+from MaskDetection_FasterRCNN_utils import *
+from MaskDetection_FasterRCNN_MaskDataset import MaskDataset
 
 
 def parse_args(args=None):

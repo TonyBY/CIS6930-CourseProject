@@ -1,7 +1,7 @@
 from PIL import Image
 import os
 
-from MaskDetection_FasterRCNN_V0_utils import generate_target
+from MaskDetection_FasterRCNN_utils import generate_target
 
 class MaskDataset(object):
     def __init__(self, transforms, imgs_path, labels_path):
