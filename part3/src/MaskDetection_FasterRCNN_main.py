@@ -14,7 +14,7 @@ def parse_args(args=None):
                         help='data path of file containing the data')
     # parser.add_argument('-labels_path', default='../data/data2/annotations/',
     #                     help='data path of file containing the annotations')
-    parser.add_argument('-model_path', default='../data/data2/FasterRCNN/checkpoints/model-epoch-253-losses-0.0000.pth',
+    parser.add_argument('-model_path', default='/home/tony/CIS6930-CourseProject/part3/data/data2/FasterRCNN/checkpoints/model-epoch-253-losses-0.0000.pth',
                         help='Pre-trained model path of FasterRCNN')
     parser.add_argument('-mode', default='eval', help='Option: train/eval')
 
@@ -105,6 +105,10 @@ def main(args):
             model2.eval()
             pred2 = model2(imgs)
 
+            print("type(): ", type(pred2))
+            print("len(pred2)", len(pred2))
+
+            print("type(pred2[0]): ", type(pred2[0]))
             print("pred2[0]: ", pred2[0])
 
             print("Prediction")
