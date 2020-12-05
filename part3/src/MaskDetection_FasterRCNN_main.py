@@ -39,7 +39,7 @@ def main(args):
     if args.mode == 'train':
         data_loader = torch.utils.data.DataLoader(dataset, batch_size=4, collate_fn=collate_fn, shuffle=False)
         # Train
-        num_epochs = 300
+        num_epochs = 1
         model.to(device)
 
         # parameters
@@ -104,6 +104,8 @@ def main(args):
 
             model2.eval()
             pred2 = model2(imgs)
+
+            print("pred2[0]: ", pred2[0])
 
             print("Prediction")
             plot_image(imgs[0], pred2[0], "prediction_%s" % i)
