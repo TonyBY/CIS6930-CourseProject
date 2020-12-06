@@ -8,6 +8,8 @@ from MaskDetection_FasterRCNN_MaskDataset import MaskDataset
 
 class_list = ['without_mask', 'with_mask', 'mask_weared_incorrect']
 BATCH_SIZE = 4
+LEARNING_RATE = 0.001
+BEST_LOSS = 0.001
 
 
 def parse_args(args=None):
@@ -50,7 +52,7 @@ def save_prediction(prediction, tmp_file):
             #                                                            img_height)
             ## add new line to file
             # print(obj_name + " " + str(left) + " " + str(top) + " " + str(right) + " " + str(bottom))
-            new_f.write(obj_name + " " + str(confidence) + " " + str(left) + " " + str(top) + " " + str(right) + " " + str(bottom) + '\n')
+            new_f.write(obj_name + " " + str(confidence) + " " + str(left) + " " + str(bottom) + " " + str(right) + " " + str(top) + '\n')
 
 
 def getAnnotationInDir(dir_path):
@@ -69,6 +71,8 @@ def main(args):
     elif args.mode == "eval":
         imgs_path = args.data_path + "testing/images/"
         labels_path = args.data_path + "testing/annotations/"
+    else:
+        raise ValueError('mode can only be train, or eval.')
 
     data_transform = transforms.Compose([transforms.ToTensor()])
     #
@@ -87,7 +91,7 @@ def main(args):
 
         # parameters
         params = [p for p in model.parameters() if p.requires_grad]
-        optimizer = torch.optim.SGD(params, lr=0.001,
+        optimizer = torch.optim.SGD(params, lr=LEARNING_RATE,
                                     momentum=0.9, weight_decay=0.0005)
 
         len_dataloader = len(data_loader)
@@ -96,7 +100,7 @@ def main(args):
         os.makedirs('../data/data2/FasterRCNN/outputs', exist_ok=True)
         os.makedirs('../data/data2/FasterRCNN/checkpoints', exist_ok=True)
 
-        best_losses = 0.0001
+        best_losses = BEST_LOSS
 
         for epoch in range(num_epochs):
             model.train()
