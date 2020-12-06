@@ -2,6 +2,7 @@ from torchvision import transforms
 import os
 import argparse
 import glob
+import time
 
 from MaskDetection_FasterRCNN_utils import *
 from MaskDetection_FasterRCNN_MaskDataset import MaskDataset
