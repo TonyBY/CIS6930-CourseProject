@@ -1,9 +1,12 @@
 from torchvision import transforms
 import os
 import argparse
+import glob
 
 from MaskDetection_FasterRCNN_utils import *
 from MaskDetection_FasterRCNN_MaskDataset import MaskDataset
+
+class_list = ['without_mask', 'with_mask', 'mask_weared_incorrect']
 
 
 def parse_args(args=None):
@@ -20,6 +23,41 @@ def parse_args(args=None):
 
     return parser.parse_args(args)
 
+def save_prediction(prediction, tmp_file):
+    boxes = prediction['boxes']
+    labels = prediction['labels']
+    score = prediction['scores']
+
+    with open(tmp_file, "w") as new_f:
+        for i in range(len(boxes)):
+            ## split a line by spaces.
+            ## "c" stands for center and "n" stands for normalized
+            obj_name = class_list[labels[i]]
+            box = boxes[i]
+            left = float(box[0])
+            bottom = float(box[1])
+            right = float(box[2])
+            top = float(box[3])
+            # x_c_n = float(x_min + x_max)/2
+            # y_c_n = float(y_min + y_max)/2
+            # width_n = float(x_max - x_min)
+            # height_n = float(y_max - y_min)/2
+            confidence = float(score[i])
+
+            # obj_name = obj_list[int(obj_id)]
+            # left, top, right, bottom = convert_yolo_coordinates_to_voc(x_c_n, y_c_n, width_n, height_n, img_width,
+            #                                                            img_height)
+            ## add new line to file
+            # print(obj_name + " " + str(left) + " " + str(top) + " " + str(right) + " " + str(bottom))
+            new_f.write(obj_name + " " + str(confidence) + " " + str(left) + " " + str(top) + " " + str(right) + " " + str(bottom) + '\n')
+
+
+def getAnnotationInDir(dir_path):
+    annotation_list = []
+    for filename in glob.glob(dir_path + '/*.txt'):
+        annotation_list.append(filename.split('/')[-1])
+    return annotation_list
+
 
 def main(args):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -32,8 +70,12 @@ def main(args):
         labels_path = args.data_path + "testing/annotations/"
 
     data_transform = transforms.Compose([transforms.ToTensor()])
-
+    #
+    # print("imgs_path: ", imgs_path)
+    # print("labels_path: ", labels_path)
+    # print(a)
     dataset = MaskDataset(data_transform, imgs_path, labels_path, args.mode)
+    print("len(dataset): ", len(dataset))
     model = get_model_instance_segmentation(3)
 
     if args.mode == 'train':
@@ -59,7 +101,7 @@ def main(args):
             model.train()
             i = 0
             epoch_loss = 0
-            for imgs, annotations in data_loader:
+            for imgs, annotations, _ in data_loader:
                 i += 1
                 imgs = list(img.to(device) for img in imgs)
                 annotations = [{k: v.to(device) for k, v in t.items()} for t in annotations]
@@ -82,6 +124,8 @@ def main(args):
             print(epoch_loss)
 
     elif args.mode == 'eval':
+        txt_list = getAnnotationInDir(imgs_path)
+
         data_loader = torch.utils.data.DataLoader(dataset, batch_size=1, collate_fn=collate_fn, shuffle=False)
         # Load model
         model2 = get_model_instance_segmentation(3)
@@ -91,7 +135,11 @@ def main(args):
 
         i = 0
         losses = 0
-        for imgs, annotations in data_loader:
+        print("len(data_loader): ", len(data_loader))
+        for imgs, annotations, imgPath in data_loader:
+            print("###################################")
+            print("imgPath: ", imgPath)
+            print("i + 842: ", i + 842)
             imgs = list(img.to(device) for img in imgs)
             annotations = [{k: v.to(device) for k, v in t.items()} for t in annotations]
 
@@ -104,17 +152,21 @@ def main(args):
 
             model2.eval()
             pred2 = model2(imgs)
-
             print("type(): ", type(pred2))
             print("len(pred2)", len(pred2))
 
             print("type(pred2[0]): ", type(pred2[0]))
             print("pred2[0]: ", pred2[0])
 
+            print("Printing generated annotations...")
+            tmp_file = "../data/data2/FasterRCNN/outputs/test_output_annotations/" + imgPath[0].split('/')[-1][:-3] + "txt"
+            save_prediction(pred2[0], tmp_file)
+            print("Done.")
+
             print("Prediction")
-            plot_image(imgs[0], pred2[0], "prediction_%s" % i)
+            plot_image(imgs[0], pred2[0], "prediction_%s" % str(i+842))
             print("Target")
-            plot_image(imgs[0], annotations[0], "target_%s" % i)
+            plot_image(imgs[0], annotations[0], "target_%s" % str(i+842))
 
             i += 1
 
@@ -127,8 +179,8 @@ def main(args):
 
 
 if __name__ == "__main__":
-    imgs_path = "../data/data2/images/"
-    labels_path: str = "../data/data2/annotations/"
+    # imgs_path = "../data/data2/images/"
+    # labels_path: str = "../data/data2/annotations/"
     # imgs = list(sorted(os.listdir(imgs_path)))
     # labels = list(sorted(os.listdir(labels_path)))
     main(parse_args())

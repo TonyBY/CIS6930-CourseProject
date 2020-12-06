@@ -6,6 +6,8 @@ from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+class_list = ['without_mask', 'with_mask', 'mask_weared_incorrect']
+
 
 def generate_box(obj):
     xmin = int(obj.find('xmin').text)
@@ -73,16 +75,26 @@ def plot_image(img_tensor, annotation, file_name):
     # Display the image
     ax.imshow(img.permute(1, 2, 0))
 
-    for box in annotation["boxes"]:
-        xmin, ymin, xmax, ymax = box
+    for i in range(len(annotation["boxes"])):
+        boxes = annotation['boxes']
+        labels = annotation['labels']
 
+        box = boxes[i]
+        xmin, ymin, xmax, ymax = box
+        obj_name = class_list[labels[i]]
         # Create a Rectangle patch
         rect = patches.Rectangle((xmin, ymin), (xmax - xmin), (ymax - ymin), linewidth=1, edgecolor='r',
-                                 facecolor='none')
-
+                                 facecolor='none', label=obj_name)
         # Add the patch to the Axes
         ax.add_patch(rect)
 
+        # score = annotation['scores']
+        try:
+            score = annotation['scores']
+            confidence = float(score[i])
+            plt.text(xmax, ymin, obj_name + "_" + str(confidence), fontsize=12, color='red')
+        except KeyError:
+            plt.text(xmax, ymin, obj_name, fontsize=12, color='red')
     # plt.show()
     # plt.imsave(arr=img.permute(1, 2, 0), fname="../data/data2/FasterRCNN/outputs/%s.jpg" % file_name)
-    plt.savefig("../data/data2/FasterRCNN/outputs/%s.jpg" % file_name, dpi=600, bbox_inches='tight', pad_inches=0)
+    plt.savefig("../data/data2/FasterRCNN/outputs/images/%s.jpg" % file_name, dpi=600, bbox_inches='tight', pad_inches=0)
