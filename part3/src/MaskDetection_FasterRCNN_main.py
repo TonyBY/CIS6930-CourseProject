@@ -7,6 +7,7 @@ from MaskDetection_FasterRCNN_utils import *
 from MaskDetection_FasterRCNN_MaskDataset import MaskDataset
 
 class_list = ['without_mask', 'with_mask', 'mask_weared_incorrect']
+BATCH_SIZE = 4
 
 
 def parse_args(args=None):
@@ -79,9 +80,9 @@ def main(args):
     model = get_model_instance_segmentation(3)
 
     if args.mode == 'train':
-        data_loader = torch.utils.data.DataLoader(dataset, batch_size=4, collate_fn=collate_fn, shuffle=False)
+        data_loader = torch.utils.data.DataLoader(dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn, shuffle=False)
         # Train
-        num_epochs = 1
+        num_epochs = 1000
         model.to(device)
 
         # parameters
@@ -95,7 +96,7 @@ def main(args):
         os.makedirs('../data/data2/FasterRCNN/outputs', exist_ok=True)
         os.makedirs('../data/data2/FasterRCNN/checkpoints', exist_ok=True)
 
-        best_losses = 0.001
+        best_losses = 0.0001
 
         for epoch in range(num_epochs):
             model.train()
@@ -105,15 +106,21 @@ def main(args):
                 i += 1
                 imgs = list(img.to(device) for img in imgs)
                 annotations = [{k: v.to(device) for k, v in t.items()} for t in annotations]
-                loss_dict = model([imgs[0]], [annotations[0]])
-                # print("#########################")
-                # print("loss_dict: ", loss_dict)
-                losses = sum(loss for loss in loss_dict.values())
+
+                batch_loss = 0
+                for batch_idx in range(len(imgs)):
+                    loss_dict = model([imgs[batch_idx]], [annotations[batch_idx]])
+                    # print("#########################")
+                    # print("loss_dict: ", loss_dict)
+                    losses = sum(loss for loss in loss_dict.values())
+                    batch_loss += losses
+
+                losses = batch_loss/BATCH_SIZE
 
                 if losses < best_losses:
                     best_losses = losses
                     torch.save(model.state_dict(),
-                               '../data/data2/FasterRCNN/checkpoints/model-epoch-{}-losses-{:.4f}.pth'.format(epoch + 1, losses))
+                               '../data/data2/FasterRCNN/checkpoints/model-epoch-{}-losses-{:.8f}.pth'.format(epoch + 1, losses))
                     print('done saving')
 
                 optimizer.zero_grad()
