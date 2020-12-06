@@ -194,4 +194,11 @@ if __name__ == "__main__":
     # labels_path: str = "../data/data2/annotations/"
     # imgs = list(sorted(os.listdir(imgs_path)))
     # labels = list(sorted(os.listdir(labels_path)))
+    print("BATCH_SIZE: ", BATCH_SIZE)
+    print("LEARNING_RATE: ", LEARNING_RATE)
+    begin_time = time.time()
     main(parse_args())
+    end_time = time.time()
+    total_time = end_time - begin_time
+    print("Total time: ", total_time)
+    print("Total time in hours: ", total_time/3600)
