@@ -10,7 +10,8 @@ from MaskDetection_FasterRCNN_MaskDataset import MaskDataset
 class_list = ['without_mask', 'with_mask', 'mask_weared_incorrect']
 BATCH_SIZE = 4
 LEARNING_RATE = 0.001
-BEST_LOSS = 0.001
+BEST_LOSS = 0.008
+TEST_SET_START_IDX = 768
 
 
 def parse_args(args=None):
@@ -24,6 +25,7 @@ def parse_args(args=None):
     parser.add_argument('-model_path', default='/home/tony/CIS6930-CourseProject/part3/data/data2/FasterRCNN/checkpoints/model-epoch-253-losses-0.0000.pth',
                         help='Pre-trained model path of FasterRCNN')
     parser.add_argument('-mode', default='eval', help='Option: train/eval')
+    parser.add_argument('-use_gpu_for_eval', action='store_true', help='Use gpu if available when in the eval mode.')
 
     return parser.parse_args(args)
 
@@ -88,7 +90,9 @@ def main(args):
         data_loader = torch.utils.data.DataLoader(dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn, shuffle=False)
         # Train
         num_epochs = 1000
-        model.to(device)
+
+        if torch.cuda.is_available():
+            model.to(device)
 
         # parameters
         params = [p for p in model.parameters() if p.requires_grad]
@@ -109,8 +113,9 @@ def main(args):
             epoch_loss = 0
             for imgs, annotations, _ in data_loader:
                 i += 1
-                imgs = list(img.to(device) for img in imgs)
-                annotations = [{k: v.to(device) for k, v in t.items()} for t in annotations]
+                if torch.cuda.is_available():
+                    imgs = list(img.to(device) for img in imgs)
+                    annotations = [{k: v.to(device) for k, v in t.items()} for t in annotations]
 
                 batch_loss = 0
                 for batch_idx in range(len(imgs)):
@@ -143,46 +148,64 @@ def main(args):
         model2 = get_model_instance_segmentation(3)
         model2.load_state_dict(torch.load(args.model_path))
 
-        model2.to(device)
+        if torch.cuda.is_available() and args.use_gpu_for_eval:
+            model2.to(device)
 
         i = 0
         losses = 0
+        accum_spf = 0
         print("len(data_loader): ", len(data_loader))
         for imgs, annotations, imgPath in data_loader:
             print("###################################")
             print("imgPath: ", imgPath)
-            print("i + 842: ", i + 842)
-            imgs = list(img.to(device) for img in imgs)
-            annotations = [{k: v.to(device) for k, v in t.items()} for t in annotations]
+            print("i + %s: " % TEST_SET_START_IDX, i + TEST_SET_START_IDX)
 
-            model2.train()
-            with torch.no_grad():
-                loss_dict = model2([imgs[0]], [annotations[0]])
-                losses += sum(loss for loss in loss_dict.values())
+            if torch.cuda.is_available() and args.use_gpu_for_eval:
+                imgs = list(img.to(device) for img in imgs)
+                annotations = [{k: v.to(device) for k, v in t.items()} for t in annotations]
 
-            # print(f'Eval Loss: {losses}')
+            try:
+                model2.train()
+                with torch.no_grad():
+                    loss_dict = model2([imgs[0]], [annotations[0]])
+                    print("type(loss_dict.values(): ", type(loss_dict.values()))
+                    print("loss_dict.values(): ", loss_dict.values())
+                    losses += sum(loss for loss in loss_dict.values())
+            except RuntimeError:
+                continue
 
-            model2.eval()
-            pred2 = model2(imgs)
-            print("type(): ", type(pred2))
-            print("len(pred2)", len(pred2))
+            try:
+                prev_time = time.time()
+                model2.eval()
+                pred2 = model2(imgs)
+                spf = float(time.time() - prev_time)
+                accum_spf += spf
+                print("SPF: {}".format(spf))
 
-            print("type(pred2[0]): ", type(pred2[0]))
-            print("pred2[0]: ", pred2[0])
+                print("type(pred2): ", type(pred2))
+                print("len(pred2)", len(pred2))
 
-            print("Printing generated annotations...")
-            tmp_file = "../data/data2/FasterRCNN/outputs/test_output_annotations/" + imgPath[0].split('/')[-1][:-3] + "txt"
-            save_prediction(pred2[0], tmp_file)
-            print("Done.")
+                print("type(pred2[0]): ", type(pred2[0]))
+                print("pred2[0]: ", pred2[0])
 
-            print("Prediction")
-            plot_image(imgs[0], pred2[0], "prediction_%s" % str(i+842))
-            print("Target")
-            plot_image(imgs[0], annotations[0], "target_%s" % str(i+842))
+                print("Saving generated annotations...")
+                tmp_file = "../data/data2/FasterRCNN/outputs/test_output_annotations/" + imgPath[0].split('/')[-1][:-3] + "txt"
+                save_prediction(pred2[0], tmp_file)
+                print("Done.")
 
-            i += 1
+                print("Prediction")
+                plot_image(imgs[0], pred2[0], "prediction_%s" % str(i+TEST_SET_START_IDX))
+
+                print("Target")
+                plot_image(imgs[0], annotations[0], "target_%s" % str(i+TEST_SET_START_IDX))
+
+
+                i += 1
+            except RuntimeError:
+                continue
 
         print(f'Eval Loss: {losses/float(i)}')
+        print("AVG_SPF: {}".format(accum_spf / (i + 1)))
 
     else:
         raise ValueError('mode can only be train, or eval.')
