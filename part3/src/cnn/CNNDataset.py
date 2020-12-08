@@ -55,8 +55,8 @@ def create_window_label(annotations):
     result = torch.zeros(len(annotations),4,144,144)
     scale = 144/300
     for i in range(len(annotations)): #each image
-        #initial class0 = 1, background
-        result[i,0] = torch.ones(144,144)
+        #initial class'3' = 1, background
+        result[i,3] = torch.ones(144,144)
         # print(annotations[i]['labels'])
         for j in range(len(annotations[i]['labels'])):
             label = annotations[i]['labels'][j]
@@ -66,5 +66,5 @@ def create_window_label(annotations):
             bg = torch.zeros(ymax+1-ymin, xmax+1-xmin)
             # print(bb.size(),result[i, label, ymin:ymax+1, xmin:xmax+1].size())
             result[i, label, ymin:ymax+1, xmin:xmax+1] = bb
-            result[i,0, ymin:ymax+1, xmin:xmax+1] = bg
+            result[i,3, ymin:ymax+1, xmin:xmax+1] = bg
     return result

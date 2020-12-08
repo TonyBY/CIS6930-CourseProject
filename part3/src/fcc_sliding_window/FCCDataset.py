@@ -44,8 +44,8 @@ class MaskDataset(object):
 def create_image_label(annotations, label_num, height, width, scale):
     result = torch.zeros(len(annotations),label_num, height, width)
     for i in range(len(annotations)): #each image
-        #initial class0 = 1, background
-        result[i,0] = torch.ones(height, width)
+        #initial class3 = 1, background
+        result[i,3] = torch.ones(height, width)
         # print(annotations[i]['labels'])
         for j in range(len(annotations[i]['labels'])):
             label = annotations[i]['labels'][j]
@@ -55,6 +55,6 @@ def create_image_label(annotations, label_num, height, width, scale):
             bg = torch.zeros(ymax+1-ymin, xmax+1-xmin)
             # print(bb.size(),result[i, label, ymin:ymax+1, xmin:xmax+1].size())
             result[i, label, ymin:ymax+1, xmin:xmax+1] = bb
-            result[i,0, ymin:ymax+1, xmin:xmax+1] = bg
+            result[i,3, ymin:ymax+1, xmin:xmax+1] = bg
     return result
 

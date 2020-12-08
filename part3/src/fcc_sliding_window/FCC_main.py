@@ -18,8 +18,8 @@ def main(args):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
     if args.mode == 'train':
-        imgs_path = args.data_path + "random_sample/training/images/"
-        labels_path = args.data_path + "random_sample/training/annotations/"
+        imgs_path = args.data_path + "training/images/"
+        labels_path = args.data_path + "training/annotations/"
     elif args.mode == "eval":
         imgs_path = args.data_path + "random_sample/testing/images/"
         labels_path = args.data_path + "random_smaple/testing/annotations/"
@@ -92,7 +92,7 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser(
         description='A CNN based image colorizer.'
     )
-    parser.add_argument('-data_path', default='../../data/data2/',
+    parser.add_argument('-data_path', default='./data/data2/',
                         help='data path of file containing the data')
     # parser.add_argument('-labels_path', default='../data/data2/annotations/',
     #                     help='data path of file containing the annotations')

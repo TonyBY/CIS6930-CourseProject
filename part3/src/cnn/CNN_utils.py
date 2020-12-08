@@ -18,7 +18,7 @@ def generate_label(obj):
         return 1
     elif obj.find('name').text == "mask_weared_incorrect":
         return 2
-    return 3
+    return 0
 
 
 def generate_target(image_id, file,width_scale,height_scale):

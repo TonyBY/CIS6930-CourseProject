@@ -67,6 +67,7 @@ def CNN_taining(trainloader,net, device, criterion, optimizer):
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
+            print(i)
             if i % 100 == 99:
                 print(f'Epoch: {epoch}, Batch: {i}/{len_dataloader}, loss: {running_loss/100}')
                 running_loss = 0.0

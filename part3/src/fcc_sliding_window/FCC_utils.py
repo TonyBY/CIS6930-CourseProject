@@ -40,13 +40,13 @@ def sliding_window(images, stepSize, windowSize):
 def get_window_label(labels):
     result = []
     for i in range(labels.size()[0]):
-        one = []
+        win_label = []
         for j in range(labels.size()[1]):
             if torch.equal(labels[i,j],torch.zeros_like(labels[i,j])):
-                one.append(0.0)
+                win_label.append(0.0)
             else:
-                one.append(1.0)
-        result.append(torch.tensor(one))
+                win_label.append(1.0)
+        result.append(torch.tensor(win_label))
     result = torch.stack(result)
     return result
 
@@ -63,7 +63,7 @@ def generate_label(obj):
         return 1
     elif obj.find('name').text == "mask_weared_incorrect":
         return 2
-    return 3
+    return 0
 
 
 def generate_target(image_id, file,width_scale,height_scale):

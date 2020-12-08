@@ -53,7 +53,7 @@ def FCC_taining(trainloader,net, device, criterion, optimizer):
             # loop over the sliding windows
             (winW, winH) = (50, 50)
             for resized_imgs in pyramid(imgs, 2, (winW, winH)):
-                #print(resized_imgs.size())
+                print(resized_imgs.size())
                 scale = resized_imgs.size()[2]/imgs.size()[2]
                 normalized_label = create_image_label(annotations, CLASS_NUM, resized_imgs.size()[2], resized_imgs.size()[3], scale)
                 # loop over the sliding window for each layer of the pyramid
@@ -67,7 +67,7 @@ def FCC_taining(trainloader,net, device, criterion, optimizer):
                     output = net(windows)
                     gt_win = get_window_label(normalized_label[:,:,y:y+winH, x:x+winW]).to(device)  
                     loss = criterion(output,gt_win)
-                   # print(loss)
+                    print(loss)
                      # avg_batch_loss = losses/BATCH_SIZE
                     if loss < best_losses:
                         best_losses = loss
@@ -78,7 +78,7 @@ def FCC_taining(trainloader,net, device, criterion, optimizer):
                     optimizer.step()
                     running_loss += loss.item()
                     
-            #print("batch ",i)
+            # print("batch ",i)
             if i % 100 == 99:
                 print(f'Epoch: {epoch}, Batch: {i}/{len_dataloader}, loss: {running_loss/100}')
                 running_loss = 0.0
