@@ -11,14 +11,15 @@ class MaskDataset(object):
         self.transforms = transforms
         # load all image files, sorting them to ensure that they are aligned
         self.imgs = list(sorted(os.listdir(imgs_path)))
+       # print(self.imgs)
         self.imgs_path = imgs_path
         self.labels_path = labels_path
         self.mode = mode
 
     def __getitem__(self, idx):
         if self.mode == "eval":
-            idx = idx + 842
-
+            idx = idx + 5032
+        #print(idx)
         # load images ad masks
         file_image = 'maksssksksss' + str(idx) + '.png'
         file_label = 'maksssksksss' + str(idx) + '.xml'

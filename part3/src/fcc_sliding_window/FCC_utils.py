@@ -7,7 +7,7 @@ import numpy as np
 
 #output: tensor
 def resize(img,width,height):
-    arr_img = np.asarray(img).transpose((1, 2, 0))
+    arr_img = np.asarray(img.cpu()).transpose((1, 2, 0))
     # print(idx, 'before Dimensions : ',arr_img.shape)
     dim = (width, height)
     arr_img = cv2.resize(arr_img, dim, interpolation = cv2.INTER_AREA)
@@ -19,7 +19,7 @@ def pyramid(images, scale=1.5, minSize=(30, 30)):
 	# yield the original image
     yield images
     while True:
-        print(images.size()[2])
+        #print(images.size()[2])
         w = int(images.size()[2] / scale)
         new = []
         for i in range(images.size()[0]):

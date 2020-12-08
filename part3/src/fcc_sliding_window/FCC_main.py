@@ -18,11 +18,11 @@ def main(args):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
     if args.mode == 'train':
-        imgs_path = args.data_path + "training/images/"
-        labels_path = args.data_path + "training/annotations/"
+        imgs_path = args.data_path + "random_sample/training/images/"
+        labels_path = args.data_path + "random_sample/training/annotations/"
     elif args.mode == "eval":
-        imgs_path = args.data_path + "testing/images/"
-        labels_path = args.data_path + "testing/annotations/"
+        imgs_path = args.data_path + "random_sample/testing/images/"
+        labels_path = args.data_path + "random_smaple/testing/annotations/"
     
     data_transform = transforms.Compose([transforms.ToTensor()])
     dataset = MaskDataset(data_transform, imgs_path, labels_path, args.mode)
@@ -39,8 +39,8 @@ def main(args):
         len_dataloader = len(trainloader)
 
         # Make folders and set parameters
-        os.makedirs('../data/data2/FasterRCNN/outputs', exist_ok=True)
-        os.makedirs('../data/data2/FasterRCNN/checkpoints', exist_ok=True)
+        os.makedirs('../../data/data2/random_sample/FCCNet/outputs', exist_ok=True)
+        os.makedirs('../../data/data2/random_sample/FCCNet/checkpoints', exist_ok=True)
 
         #train the model
         FCC_taining(trainloader, net, device, criterion, optimizer)
@@ -62,6 +62,8 @@ def main(args):
             for data in testloader:
                 images, labels = data
                 outputs = net(images)
+                #get loss
+                #get accuracy   
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
@@ -90,7 +92,7 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser(
         description='A CNN based image colorizer.'
     )
-    parser.add_argument('-data_path', default='./data/data2/',
+    parser.add_argument('-data_path', default='../../data/data2/',
                         help='data path of file containing the data')
     # parser.add_argument('-labels_path', default='../data/data2/annotations/',
     #                     help='data path of file containing the annotations')

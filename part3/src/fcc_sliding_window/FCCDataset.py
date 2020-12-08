@@ -17,7 +17,7 @@ class MaskDataset(object):
 
     def __getitem__(self, idx):
         if self.mode == "eval":
-            idx = idx + 842
+            idx = idx + 5032
 
         # load images ad masks
         file_image = 'maksssksksss' + str(idx) + '.png'

@@ -23,14 +23,16 @@ def main(args):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
     if args.mode == 'train':
-        imgs_path = args.data_path + "training/images/"
-        labels_path = args.data_path + "training/annotations/"
+        imgs_path = args.data_path + "random_sample/training/images/"
+        labels_path = args.data_path + "random_sample/training/annotations/"
     elif args.mode == "eval":
-        imgs_path = args.data_path + "testing/images/"
-        labels_path = args.data_path + "testing/annotations/"
+        imgs_path = args.data_path + "random_sample/testing/images/"
+        labels_path = args.data_path + "random_sample/testing/annotations/"
     
     data_transform = transforms.Compose([transforms.ToTensor()])
     dataset = MaskDataset(data_transform, imgs_path, labels_path, args.mode)
+   # print(len(dataset))
+   # print(a)
     if args.mode == 'train':
         trainloader = torch.utils.data.DataLoader(dataset, batch_size=4, collate_fn=collate_fn, shuffle=False)
         net = CnnNet()
@@ -44,8 +46,8 @@ def main(args):
         len_dataloader = len(trainloader)
 
         # Make folders and set parameters
-        os.makedirs('../data/data2/FasterRCNN/outputs', exist_ok=True)
-        os.makedirs('../data/data2/FasterRCNN/checkpoints', exist_ok=True)
+        os.makedirs('../../data/data2/random_sample/CNNNet/outputs', exist_ok=True)
+        os.makedirs('../../data/data2/random_sample/CNNNet/checkpoints', exist_ok=True)
         best_losses = 0.001
 
         #train the model
@@ -96,7 +98,7 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser(
         description='A CNN based image colorizer.'
     )
-    parser.add_argument('-data_path', default='./data/data2/',
+    parser.add_argument('-data_path', default='../../data/data2/',
                         help='data path of file containing the data')
     # parser.add_argument('-labels_path', default='../data/data2/annotations/',
     #                     help='data path of file containing the annotations')
