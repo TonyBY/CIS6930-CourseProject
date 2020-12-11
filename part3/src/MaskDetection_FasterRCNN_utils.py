@@ -19,11 +19,12 @@ def generate_box(obj):
 
 
 def generate_label(obj):
-    if obj.find('name').text == "with_mask":
+    if 'without' in obj.find('name').text or 'no' in obj.find('name').text:
+        return 0
+    elif 'with_' in obj.find('name').text:
         return 1
-    elif obj.find('name').text == "mask_weared_incorrect":
+    elif 'incorrect' in obj.find('name').text:
         return 2
-    return 0
 
 
 def generate_target(image_id, file):

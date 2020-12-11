@@ -22,7 +22,7 @@ def parse_args(args=None):
                         help='data path of file containing the data')
     # parser.add_argument('-labels_path', default='../data/data2/annotations/',
     #                     help='data path of file containing the annotations')
-    parser.add_argument('-model_path', default='/home/tony/CIS6930-CourseProject/part3/data/data2/FasterRCNN/checkpoints/model-epoch-253-losses-0.0000.pth',
+    parser.add_argument('-model_path', default='../data/data2/FasterRCNN/checkpoints/model-epoch-88-losses-0.00019005.pth',
                         help='Pre-trained model path of FasterRCNN')
     parser.add_argument('-mode', default='eval', help='Option: train/eval')
     parser.add_argument('-use_gpu_for_eval', action='store_true', help='Use gpu if available when in the eval mode.')
@@ -89,7 +89,7 @@ def main(args):
     if args.mode == 'train':
         data_loader = torch.utils.data.DataLoader(dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn, shuffle=False)
         # Train
-        num_epochs = 1000
+        num_epochs = 100
 
         if torch.cuda.is_available():
             model.to(device)
@@ -146,7 +146,7 @@ def main(args):
         data_loader = torch.utils.data.DataLoader(dataset, batch_size=1, collate_fn=collate_fn, shuffle=False)
         # Load model
         model2 = get_model_instance_segmentation(3)
-        model2.load_state_dict(torch.load(args.model_path))
+        model2.load_state_dict(torch.load(args.model_path,map_location=torch.device('cpu')))
 
         if torch.cuda.is_available() and args.use_gpu_for_eval:
             model2.to(device)
@@ -195,7 +195,6 @@ def main(args):
 
                 print("Prediction")
                 plot_image(imgs[0], pred2[0], "prediction_%s" % str(i+TEST_SET_START_IDX))
-
                 print("Target")
                 plot_image(imgs[0], annotations[0], "target_%s" % str(i+TEST_SET_START_IDX))
 
