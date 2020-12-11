@@ -3,6 +3,7 @@ import os
 import numpy as np
 import cv2
 import torch
+import glob
 # import the necessary packages
 from FCC_utils import *
 
@@ -10,7 +11,10 @@ class MaskDataset(object):
     def __init__(self, transforms, imgs_path, labels_path, mode):
         self.transforms = transforms
         # load all image files, sorting them to ensure that they are aligned
-        self.imgs = list(sorted(os.listdir(imgs_path)))
+        self.imgs = []
+        for filename in glob.glob(imgs_path + '/*.png'):
+            self.imgs.append(filename)
+        # self.imgs = list(sorted(os.listdir(imgs_path)))
         self.imgs_path = imgs_path
         self.labels_path = labels_path
         self.mode = mode

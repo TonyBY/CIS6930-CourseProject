@@ -7,11 +7,15 @@ import os
 import argparse
 import torch.nn as nn
 import glob
+import time
 
 from FCCNet import *
 from FCCDataset import MaskDataset
 from FCC_utils import *
 
+class_list = ['without_mask', 'with_mask', 'mask_weared_incorrect']
+BATCH_SIZE = 4
+LEARNING_RATE = 0.001
 TEST_SET_START_IDX = 768
 
 def collate_fn(batch):
@@ -39,14 +43,14 @@ def main(args):
     data_transform = transforms.Compose([transforms.ToTensor()])
     dataset = MaskDataset(data_transform, imgs_path, labels_path, args.mode)
     if args.mode == 'train':
-        trainloader = torch.utils.data.DataLoader(dataset, batch_size=4, collate_fn=collate_fn, shuffle=False)
+        trainloader = torch.utils.data.DataLoader(dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn, shuffle=False)
         net = FccNet()
         net.to(device)
         # Loss function and optimizer
         # parameters
         params = [p for p in net.parameters() if p.requires_grad]
         criterion = nn.BCELoss()
-        optimizer = torch.optim.SGD(params, lr=0.001,
+        optimizer = torch.optim.SGD(params, lr=LEARNING_RATE,
                                     momentum=0.9, weight_decay=0.0005)
         len_dataloader = len(trainloader)
 
@@ -121,4 +125,11 @@ def parse_args(args=None):
 
 
 if __name__ == '__main__':
+    print("BATCH_SIZE: ", BATCH_SIZE)
+    print("LEARNING_RATE: ", LEARNING_RATE)
+    begin_time = time.time()
     main(parse_args())
+    end_time = time.time()
+    total_time = end_time - begin_time
+    print("Total time: ", total_time)
+    print("Total time in hours: ", total_time/3600)
