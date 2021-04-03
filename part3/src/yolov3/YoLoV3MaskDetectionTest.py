@@ -1,5 +1,14 @@
 import cv2
 import numpy as np
+import glob
+
+
+def getImagesInDir(dir_path):
+    image_list = []
+    for filename in glob.glob(dir_path + '/*.png'):
+        image_list.append(filename)
+
+    return image_list
 
 
 def main():
@@ -9,24 +18,23 @@ def main():
     with open("classes.txt", "r") as f:
         classes = f.read().splitlines()
 
-    cap = cv2.VideoCapture('../../data/data2/testing/videos/mask_detection.mp4')
+    image_paths = getImagesInDir("../../data/data2/testing/images/")
+
     font = cv2.FONT_HERSHEY_PLAIN
     colors = np.random.uniform(0, 255, size=(100, 3))
 
-    img_array = []
+    # img_array = []
     img_idx = 0
-    frame_idx = 0
     while True:
-        img_idx += 1
         try:
-            _, img = cap.read()
-            if img_idx % 24 == 0:
-                frame_idx += 1
-                print("##############################################")
-                print("Processing frame: %s (24 images/frame)" % frame_idx)
+            print("img_idx: ", img_idx)
+            print("image_paths[img_idx]: ", image_paths[img_idx])
+
+            img = cv2.imread(image_paths[img_idx])
+
             height, width, _ = img.shape
 
-            blob = cv2.dnn.blobFromImage(img, 1/255, (416, 416), (0,0,0), swapRB=True, crop=False)
+            blob = cv2.dnn.blobFromImage(img, 1/255, (416, 416), (0, 0, 0), swapRB=True, crop=False)
             net.setInput(blob)
             output_layers_names = net.getUnconnectedOutLayersNames()
             layerOutputs = net.forward(output_layers_names)
@@ -36,7 +44,14 @@ def main():
             class_ids = []
 
             for output in layerOutputs:
+                # print("type(output): ", type(output))
+                # print("output.shape: ", output.shape)
+                # print("output: ", output)
                 for detection in output:
+                    # print("type(detection): ", type(detection))
+                    # print("detection.shape: ", detection.shape)
+                    # print("detection: ", detection)
+                    # print(a)
                     scores = detection[5:]
                     class_id = np.argmax(scores)
                     confidence = scores[class_id]
@@ -59,28 +74,32 @@ def main():
                 for i in indexes.flatten():
                     x, y, w, h = boxes[i]
                     label = str(classes[class_ids[i]])
-                    confidence = str(round(confidences[i],2))
+                    confidence = str(round(confidences[i], 2))
                     color = colors[i]
                     cv2.rectangle(img, (x,y), (x+w, y+h), color, 2)
-                    cv2.putText(img, label + " " + confidence, (x, y+20), font, 2, (255,255,255), 2)
+                    cv2.putText(img, label + " " + confidence, (x, y+20), font, 0.5, (255, 255, 255), 1)
 
-            img_array.append(img)
+            cv2.imwrite("../../data/data2/YoLoV3/output/images/" + image_paths[img_idx].split('/')[-1], img)
+            img_idx += 1
+
+            # img_array.append(img)
+
             # cv2.imshow('Image', img)
             # key = cv2.waitKey(1)
             # if key == 27:
             #     break
-        except AttributeError:
+        except IndexError:
             break
 
-    print("Generating the video with the processed images.")
-    out = cv2.VideoWriter('../../data/data2/testing/videos/mask_detection_out.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 20.0, (width, height))
-    for i in range(len(img_array)):
-        out.write(img_array[i])
-    out.release()
-    print("Done")
-
-    cap.release()
-    cv2.destroyAllWindows()
+    # print("Generating the video with the processed images.")
+    # out = cv2.VideoWriter('../../data/data2/testing/videos/mask_detection_out.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 20.0, (width, height))
+    # for i in range(len(img_array)):
+    #     out.write(img_array[i])
+    # out.release()
+    # print("Done")
+    #
+    # cap.release()
+    # cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':
