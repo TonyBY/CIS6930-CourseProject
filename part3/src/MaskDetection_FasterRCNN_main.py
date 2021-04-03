@@ -91,6 +91,7 @@ def main(args):
 
         i = 0
         losses = 0
+        print("len(data_loader): ", len(data_loader))
         for imgs, annotations in data_loader:
             imgs = list(img.to(device) for img in imgs)
             annotations = [{k: v.to(device) for k, v in t.items()} for t in annotations]
